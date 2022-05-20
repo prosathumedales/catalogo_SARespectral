@@ -60,7 +60,7 @@ ui <- fluidPage(
                   choices = polarizaciones, multiple = TRUE,
                   selected = polarizaciones),
 
-      shiny::dateRangeInput("rango_fechas", "Rango de fechas",
+      dateRangeInput("rango_fechas", "Rango de fechas",
                             language = "es",
                             start = min(datos$fecha),
                             min = min(datos$fecha)),
@@ -116,6 +116,10 @@ server <- function(input, output, session) {
                         label = "Polarización",
                         choices = polarizaciones,
                         selected = polarizaciones)
+      updateDateRangeInput(inputId = "rango_fechas",
+                           min = as.Date("2006-01-01"))
+
+
     } else if (input$tipo_sensor == "Óptico") {
       shinyjs::disable("tipo_escena")
       shinyjs::disable("angulo_incidencia")
@@ -124,6 +128,9 @@ server <- function(input, output, session) {
                         label = "Bandas",
                         choices = bandas,
                         selected = bandas)
+
+      updateDateRangeInput(inputId = "rango_fechas",
+                           min = as.Date("1984-01-01"))
     }
   })
 
