@@ -51,7 +51,7 @@ ui <- fluidPage(
 
       shinyjs::disabled(
         sliderInput("angulo_incidencia", "Ángulo de incidencia",
-                    min = -15, max = 15, value = c(-10, 10))),
+                    min = 20, max = 50, value = c(20, 50))),
 
       shinyjs::disabled(
         selectInput("banda_nombre", "Polarización",
