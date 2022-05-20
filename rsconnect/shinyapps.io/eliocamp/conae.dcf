@@ -5,10 +5,10 @@ account: eliocamp
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6302944
-bundleId: 5906848
+bundleId: 5928520
 url: https://eliocamp.shinyapps.io/conae/
-when: 1652562404.90872
-lastSyncTime: 1652562404.90873
+when: 1653079528.22069
+lastSyncTime: 1653079528.22071
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: Instrucciones para tablero.docx|notas.html|notas.md
+ignoredFiles: plumber.R
