@@ -83,13 +83,22 @@ server <- function(input, output) {
   # shinyjs::disable("test")
 
   observe({
+    choices <- datos[tipo_sensor == input$tipo_sensor, unique(sensor)]
     updateSelectInput(inputId = "sensor",
-                      choices = datos[tipo_sensor == input$tipo_sensor, unique(sensor)])
+                      choices = choices,
+                      selected = choices[1])
   })
 
   observe({
     updateSelectInput(inputId = "tipo_escena",
                       choices = datos[tipo_sensor == input$tipo_sensor, unique(tipo_escena)])
+  })
+
+  observe({
+    choices <- datos[UP == input$UP, unique(tipo_humed)]
+    updateSelectInput(inputId = "tipo_humed",
+                      choices = choices,
+                      selected = choices)
   })
 
   observe({
