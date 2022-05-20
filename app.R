@@ -108,14 +108,18 @@ server <- function(input, output) {
     }
   })
 
-  datos_select <- reactive(
+  datos_select <- reactive({
     datos |>
       DT(UP == input$UP) |>
       DT(tipo_humed %in% input$tipo_humed) |>   # TODO: cuando es NULL
       DT(tipo_sensor == input$tipo_sensor) |>
       DT(fecha %between% input$rango_fechas) |>
-      DT(banda_nombre %in% input$banda_nombre)
-  )
+      DT(banda_nombre %in% input$banda_nombre) |>
+      # DT(angulo_incidencia %between% input$angulo_incidencia) |>   # los datos todavía no están
+      identity()
+  })
+
+
   output$boxplot <- renderPlot({
     plot_boxplot(datos_select())
   })
