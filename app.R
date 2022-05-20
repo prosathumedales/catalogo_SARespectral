@@ -11,9 +11,7 @@ library(shiny)
 library(ggplot2)
 library(data.table)
 
-decibel <- function(x) {
-  10*log10(x)
-}
+source("scripts/plot-boxplot.R")
 
 DT <- `[`
 file <- "datos/PROSAT_DeltaSuperior_2022-05-08.csv"
@@ -119,8 +117,7 @@ server <- function(input, output) {
       DT(banda_nombre %in% input$banda_nombre)
   )
   output$boxplot <- renderPlot({
-    ggplot(datos_select(), aes(tipo_humed, decibel(valor_promedio))) +
-      geom_boxplot(aes(color = banda_nombre))
+    plot_boxplot(datos_select())
   })
 
   output$serie <- renderPlot({
