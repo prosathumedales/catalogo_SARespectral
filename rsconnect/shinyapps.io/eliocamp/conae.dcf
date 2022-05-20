@@ -1,0 +1,14 @@
+name: conae
+title: conae
+username:
+account: eliocamp
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6302944
+bundleId: 5906848
+url: https://eliocamp.shinyapps.io/conae/
+when: 1652562404.90872
+lastSyncTime: 1652562404.90873
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Instrucciones para tablero.docx|notas.html|notas.md
