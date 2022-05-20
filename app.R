@@ -25,6 +25,8 @@ names(humedales) <- gsub("_", " ", humedales)
 
 escenas <- datos[tipo_sensor == "SAR", unique(tipo_escena)]
 
+polarizaciones <- c("HH", "VH", "VV")
+bandas <- letters[1:5]  # Cambiar por las bandas reales
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -53,11 +55,10 @@ ui <- fluidPage(
         sliderInput("angulo_incidencia", "Ángulo de incidencia",
                     min = 20, max = 50, value = c(20, 50))),
 
-      shinyjs::disabled(
-        selectInput("banda_nombre", "Polarización",
-                    choices = c("HH", "VH", "VV"), multiple = TRUE,
-                    selected = c("HH", "VH", "VV"))
-      ),
+
+      selectInput("banda_nombre", "Polarización",
+                  choices = polarizaciones, multiple = TRUE,
+                  selected = polarizaciones),
 
       shiny::dateRangeInput("rango_fechas", "Rango de fechas",
                             language = "es",
@@ -77,8 +78,7 @@ ui <- fluidPage(
 )
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
-  # shinyjs::disable("test")
+server <- function(input, output, session) {
 
   observe({
     choices <- datos[tipo_sensor == input$tipo_sensor, unique(sensor)]
@@ -100,11 +100,30 @@ server <- function(input, output) {
   })
 
   observe({
+    choices <- datos[UP == input$UP, unique(tipo_humed)]
+    updateSelectInput(inputId = "tipo_humed",
+                      choices = choices,
+                      selected = choices)
+  })
+
+
+  observe({
     if (input$tipo_sensor == "SAR") {
       shinyjs::enable("tipo_escena")
       shinyjs::enable("angulo_incidencia")
-      shinyjs::enable("banda_nombre")
 
+      updateSelectInput(inputId = "banda_nombre",
+                        label = "Polarización",
+                        choices = polarizaciones,
+                        selected = polarizaciones)
+    } else if (input$tipo_sensor == "Óptico") {
+      shinyjs::disable("tipo_escena")
+      shinyjs::disable("angulo_incidencia")
+
+      updateSelectInput(inputId = "banda_nombre",
+                        label = "Bandas",
+                        choices = bandas,
+                        selected = bandas)
     }
   })
 
