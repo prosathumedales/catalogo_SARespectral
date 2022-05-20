@@ -29,6 +29,12 @@ escenas <- datos[tipo_sensor == "SAR", unique(tipo_escena)]
 polarizaciones <- c("HH", "VH", "VV")
 bandas <- letters[1:5]  # Cambiar por las bandas reales
 
+
+
+alerta <- div(h2("El filtro no devolvió ningún dato"),
+    p(style = "display:block;", "Pruebe con otra combinación de filtros"))
+
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   shinyjs::useShinyjs(),
@@ -71,8 +77,8 @@ ui <- fluidPage(
     # Show a plot of the generated distribution
     mainPanel(
       tabsetPanel(type = "tabs",
-                  tabPanel("Boxplot", plotOutput("boxplot")),
-                  tabPanel("Serie temporal", plotOutput("serie"))
+                  tabPanel("Boxplot", uiOutput("boxplot_ph")),
+                  tabPanel("Serie temporal", uiOutput("serie_ph"))
       )
     )
   )
@@ -147,13 +153,31 @@ server <- function(input, output, session) {
   })
 
 
-  output$boxplot <- renderPlot({
+  output$boxplot_ph <- renderUI({
+    if (nrow(datos_select()) == 0) {
+      alerta
+    } else {
+      plotOutput("boxplot_plot")
+    }
+  })
+  output$boxplot_plot <- renderPlot({
+    req(nrow(datos_select()) > 0)
     plot_boxplot(datos_select())
   })
 
-  output$serie <- renderPlot({
+  output$serie_ph <- renderUI({
+    if (nrow(datos_select()) == 0) {
+      alerta
+    } else {
+      plotOutput("serie_plot")
+    }
+  })
+  output$serie_plot <- renderPlot({
+    req(nrow(datos_select()) > 0)
     plot_serie(datos_select())
   })
+
+
 }
 
 # Run the application
