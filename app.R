@@ -1,13 +1,6 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
+library(shinydashboard)
 library(shiny)
+library(shinyWidgets)
 library(ggplot2)
 library(data.table)
 
@@ -29,63 +22,134 @@ escenas <- datos[tipo_sensor == "SAR", unique(tipo_escena)]
 polarizaciones <- c("HH", "VH", "VV")
 bandas <- letters[1:5]  # Cambiar por las bandas reales
 
+textos_paisajes <- yaml::read_yaml("datos/textos_paisajes.yaml")
+
+
+descripcionUPModal <- function(datos) {
+  modalDialog(
+    title = h2(datos[["titulo"]]),
+    h3("Descripcion:"),
+    p(datos[["descripcion"]]),
+    h3("Contexto en el Inventario Nacional de Humedales:"),
+    p(datos[["contexto"]])
+  )
+}
+
+detallesUI <- function(id) {
+  id <- gsub("_", "-", id)
+  ns <- NS(id)
+  actionButton(inputId = ns("detalles"),
+               shiny::icon("question-sign", lib = "glyphicon"))
+}
+
+detallesServer <- function(id, datos) {
+  id <- gsub("_", "-", id)
+  force(datos)
+  moduleServer(
+    id,
+    function(input, output, session) {
+      # browser()
+      original <- input$detalles
+
+      observeEvent(input$detalles, {
+        if (is.null(original) || input$detalles > original) {
+        showModal(
+          modalDialog(
+            title = h2(datos[["titulo"]]),
+            p(HTML(datos[["descripcion"]]))
+          )
+        )
+        }
+      })
+    }
+  )
+}
+
+
+
+textos_humedales <- yaml::read_yaml("datos/textos_humedales.yaml")
+
+humedales_names <- function(humedales) {
+  unname(lapply(seq_along(humedales), function(h)
+    span(humedales[[h]]$titulo,
+         detallesUI(names(humedales)[[h]]),
+         title = humedales[[h]]$descripcion)
+  ))
+}
 
 
 alerta <- div(h2("El filtro no devolvió ningún dato"),
-    p(style = "display:block;", "Pruebe con otra combinación de filtros"))
+              p(style = "display:block;", "Pruebe con otra combinación de filtros"))
 
-
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-  shinyjs::useShinyjs(),
-  # Application title
-  titlePanel("App borrador no publicar"),
-
-  # Sidebar with a slider input for number of bins
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("UP", "Unidad de paisaje",
-                  choices = c("I4", "I2b")),
-      selectInput("tipo_humed", "Tipo de humedal",
-                  choices = humedales, multiple = TRUE, selected = humedales),
-      selectInput("tipo_sensor", "Tipo de sensor",
-                  choices = c("SAR", "Óptico")),
-
-      selectInput("sensor", "Sistema satelital",
-                  choices = ""),
-
-      shinyjs::disabled(
-        selectInput("tipo_escena", "Tipo de escena",
-                    choices = escenas, multiple = TRUE)),
-
-      shinyjs::disabled(
-        sliderInput("angulo_incidencia", "Ángulo de incidencia",
-                    min = 20, max = 50, value = c(20, 50))),
-
-
-      selectInput("banda_nombre", "Polarización",
-                  choices = polarizaciones, multiple = TRUE,
-                  selected = polarizaciones),
-
-      dateRangeInput("rango_fechas", "Rango de fechas",
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(disable = TRUE),
+  dashboardBody(
+    shinyjs::useShinyjs(),
+    fluidRow(
+      column(width = 4,
+             selectInput("UP", "Unidad de paisaje",
+                         choices = c("I4", "I2b")),
+             actionButton("UP_info", shiny::icon("question-sign", lib = "glyphicon"),
+                          style = "display:inline-block")
+      ),
+      column(width = 8,
+             uiOutput("tipo_humed_checkbox")
+      )
+    ),
+    fluidRow(
+      column(width = 4,
+             selectInput("tipo_sensor", "Tipo de sensor",
+                         choices = c("SAR", "Óptico"))
+      ),
+      column(width = 4,
+             selectInput("sensor", "Sistema satelital",
+                         choices = "")
+      ),
+      column(width = 4,
+             shinyjs::disabled(
+               selectInput("tipo_escena", "Tipo de escena",
+                           choices = escenas, multiple = TRUE))
+      )
+    ),
+    fluidRow(
+      column(width = 4,
+             shinyjs::disabled(
+               sliderInput("angulo_incidencia", "Ángulo de incidencia",
+                           min = 20, max = 50, value = c(20, 50)))
+      ),
+      column(width = 4,
+             selectInput("banda_nombre", "Polarización",
+                         choices = polarizaciones, multiple = TRUE,
+                         selected = polarizaciones)
+      ),
+      column(width = 4,
+             dateRangeInput("rango_fechas", "Rango de fechas",
                             language = "es",
                             start = min(datos$fecha),
-                            min = min(datos$fecha)),
-
-    ),
-
-    # Show a plot of the generated distribution
-    mainPanel(
-      tabsetPanel(type = "tabs",
-                  tabPanel("Boxplot", uiOutput("boxplot_ph")),
-                  tabPanel("Serie temporal", uiOutput("serie_ph"))
+                            min = min(datos$fecha))
       )
+    ),
+    fluidRow(
+      tabBox(width = 12,
+             tabPanel("Boxplot", uiOutput("boxplot_ph")),
+             tabPanel("Serie temporal", uiOutput("serie_ph"))
+      )
+
+
     )
   )
 )
 
+
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
+
+  observeEvent(input$UP_info, {
+    showModal(descripcionUPModal(textos_paisajes[[input$UP]]))
+
+  })
+
 
   observe({
     choices <- datos[tipo_sensor == input$tipo_sensor, unique(sensor)]
@@ -99,19 +163,26 @@ server <- function(input, output, session) {
                       choices = datos[tipo_sensor == input$tipo_sensor, unique(tipo_escena)])
   })
 
-  observe({
-    choices <- datos[UP == input$UP, unique(tipo_humed)]
-    updateSelectInput(inputId = "tipo_humed",
-                      choices = choices,
-                      selected = choices)
+
+  output$tipo_humed_checkbox <- renderUI({
+    humedales <- textos_humedales[[input$UP]]
+    # browser()
+    for (h in seq_along(humedales)) {
+      detallesServer(names(humedales)[[h]], humedales[[h]])
+    }
+
+    checkboxGroupButtons(
+      inputId = "tipo_humed",
+      label = "Tipo de humedal:",
+      individual = TRUE,
+      choiceNames = humedales_names(humedales),
+      choiceValues = names(humedales),
+      selected = names(humedales)
+    )
+
+
   })
 
-  observe({
-    choices <- datos[UP == input$UP, unique(tipo_humed)]
-    updateSelectInput(inputId = "tipo_humed",
-                      choices = choices,
-                      selected = choices)
-  })
 
 
   observe({
@@ -182,3 +253,4 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
+
