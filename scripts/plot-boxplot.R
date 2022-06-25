@@ -11,9 +11,11 @@ plot_boxplot <- function(datos) {
                   fechas,
                   " con datos satelitales ", sensor)
 
+  xlab <- ifelse(sensor == "SENTINEL", "Polarización", "Banda")
+
   ggplot(datos, aes(banda_nombre, decibel(valor_promedio))) +
-    geom_boxplot(aes(color = tipo_humed)) +
-    scale_x_discrete("Polarización") +
+    geom_boxplot(aes(color = gsub("_", " ", tipo_humed))) +
+    scale_x_discrete(xlab) +
     scale_y_continuous("Retrodispersión (decibeles)") +
     theme_minimal() +
     theme(legend.direction = "horizontal", legend.position = "bottom") +
