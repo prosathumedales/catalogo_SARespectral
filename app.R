@@ -8,19 +8,15 @@ source("scripts/plot-boxplot.R")
 source("scripts/plot-serie.R")
 
 DT <- `[`
-file <- "datos/PROSAT_DeltaSuperior_2022-05-08.csv"
 
-datos <- data.table::fread(file)
-datos[, fecha := lubridate::dmy(fecha)]
-datos <- datos[!is.na(fecha)]
-
+datos <- readRDS("datos/datos.Rds")
 humedales <- unique(datos$tipo_humed)
 names(humedales) <- gsub("_", " ", humedales)
 
-escenas <- datos[tipo_sensor == "SAR", unique(tipo_escena)]
+escenas <- datos[tipo_sensor == "XEMT", unique(tipo_escena)]
 
 polarizaciones <- c("HH", "VH", "VV")
-bandas <- letters[1:5]  # Cambiar por las bandas reales
+bandas <- datos[tipo_sensor == "Sentinel-2", unique(banda_nombre)]
 
 textos_paisajes <- yaml::read_yaml("datos/textos_paisajes.yaml")
 
@@ -48,17 +44,16 @@ detallesServer <- function(id, datos) {
   moduleServer(
     id,
     function(input, output, session) {
-      # browser()
       original <- input$detalles
 
       observeEvent(input$detalles, {
         if (is.null(original) || input$detalles > original) {
-        showModal(
-          modalDialog(
-            title = h2(datos[["titulo"]]),
-            p(HTML(datos[["descripcion"]]))
+          showModal(
+            modalDialog(
+              title = h2(datos[["titulo"]]),
+              p(HTML(datos[["descripcion"]]))
+            )
           )
-        )
         }
       })
     }
@@ -100,7 +95,8 @@ ui <- dashboardPage(
     fluidRow(
       column(width = 4,
              selectInput("tipo_sensor", "Tipo de sensor",
-                         choices = c("SAR", "Óptico"))
+                         choices = c("SAR" = "XEMT",
+                                     "Óptico" = "Sentinel-2"))
       ),
       column(width = 4,
              selectInput("sensor", "Sistema satelital",
@@ -116,7 +112,7 @@ ui <- dashboardPage(
       column(width = 4,
              shinyjs::disabled(
                sliderInput("angulo_incidencia", "Ángulo de incidencia",
-                           min = 20, max = 50, value = c(20, 50)))
+                           min = 2, max = 50, value = c(2, 50)))
       ),
       column(width = 4,
              selectInput("banda_nombre", "Polarización",
@@ -159,14 +155,17 @@ server <- function(input, output, session) {
   })
 
   observe({
+
+    escenas <-  datos[tipo_sensor == input$tipo_sensor, unique(tipo_escena)]
     updateSelectInput(inputId = "tipo_escena",
-                      choices = datos[tipo_sensor == input$tipo_sensor, unique(tipo_escena)])
+                      choices = escenas,
+                      selected = escenas)
   })
 
 
   output$tipo_humed_checkbox <- renderUI({
     humedales <- textos_humedales[[input$UP]]
-    # browser()
+
     for (h in seq_along(humedales)) {
       detallesServer(names(humedales)[[h]], humedales[[h]])
     }
@@ -186,7 +185,7 @@ server <- function(input, output, session) {
 
 
   observe({
-    if (input$tipo_sensor == "SAR") {
+    if (input$tipo_sensor == "XEMT") {
       shinyjs::enable("tipo_escena")
       shinyjs::enable("angulo_incidencia")
 
@@ -198,7 +197,7 @@ server <- function(input, output, session) {
                            min = as.Date("2006-01-01"))
 
 
-    } else if (input$tipo_sensor == "Óptico") {
+    } else if (input$tipo_sensor == "Sentinel-2") {
       shinyjs::disable("tipo_escena")
       shinyjs::disable("angulo_incidencia")
 
@@ -213,18 +212,24 @@ server <- function(input, output, session) {
   })
 
   datos_select <- reactive({
-    datos |>
+    datos <- datos |>
       DT(UP == input$UP) |>
-      DT(tipo_humed %in% input$tipo_humed) |>   # TODO: cuando es NULL
       DT(tipo_sensor == input$tipo_sensor) |>
+      DT(tipo_humed %in% input$tipo_humed) |>   # TODO: cuando es NULL
+
       DT(fecha %between% input$rango_fechas) |>
-      DT(banda_nombre %in% input$banda_nombre) |>
-      # DT(angulo_incidencia %between% input$angulo_incidencia) |>   # los datos todavía no están
-      identity()
+      DT(banda_nombre %in% input$banda_nombre)
+
+    if (input$tipo_sensor == "XEMT") {
+      datos <- datos[angulo_incidencia %between% input$angulo_incidencia]
+    }
+
+    datos
   })
 
 
   output$boxplot_ph <- renderUI({
+
     if (nrow(datos_select()) == 0) {
       alerta
     } else {
