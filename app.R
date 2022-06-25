@@ -147,12 +147,24 @@ ui <- dashboardPage(
                "La información de ", em("SAOCOM"), " fue generada a partir de productos SAOCOM® Originales – ©CONAE – (2022), adquiridos en el marco del proyecto.",
                br(),
                strong("Autoras/es: "), "Natalia Morandeira, Francisco Grings, Mercedes Salvia, Matías Barber, Adriana Rojas Barrios, Mariela Rajngewerc, Maira Gayol, Esteban Roitberg, Elio Campitelli, Priscilla Minotti, Patricia Kandus."
-             )
+             ),
+             h4("Referencias:"),
+
+             a("Kandus et al. 2019 - Inventario de Humedales en la Región del Complejo Fluvio-Litoral del Bajo Paraná",
+               href = "https://lac.wetlands.org/download/6536/"),
+             br(),
+             a("Benzaquén et al. 2013 - Sistemas de paisajes de humedales del Corredor fluvial Paraná-Paraguay",
+               href = "http://www.unsam.edu.ar/tau/sitio/wp-content/uploads/inventario_humedales_parana_paraguay.pdf"),
+             br(),
+             a("Benzaquén et al. 2017 - Regiones de humedales de la Argentina",
+               href = "https://www.argentina.gob.ar/sites/default/files/regioneshumedbaja2.pdf")
       )
+
 
     )
   )
 )
+
 
 server <- function(input, output, session) {
 
