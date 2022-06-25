@@ -5,10 +5,10 @@ account: eliocamp
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6302944
-bundleId: 6022132
+bundleId: 6042832
 url: https://eliocamp.shinyapps.io/conae/
-when: 1655669890.29784
-lastSyncTime: 1655669890.29786
+when: 1656186169.23644
+lastSyncTime: 1656186169.23644
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: plumber.R
+ignoredFiles: datos_raw/PROSAT_DeltaSuperior_2022-05-08.csv|datos_raw/PROSAT_DeltaSuperior_Optico_S2Harmonized_UPI4.csv|datos_raw/PROSAT_DeltaSuperior_SAR_SENTINEL1_20220614.csv|logos_raw/logo_3iA.jpeg|logos_raw/logo_funintec.png|logos_raw/logo_iafe.png|logos_raw/logo_iiia.png|plumber.R|procesamiento_datos.R|textos_descriptivos.docx
