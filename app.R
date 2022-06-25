@@ -131,14 +131,29 @@ ui <- dashboardPage(
              tabPanel("Boxplot", uiOutput("boxplot_ph")),
              tabPanel("Serie temporal", uiOutput("serie_ph"))
       )
-
+    ),
+    fluidRow(
+      column(width = 12,
+             style = "background-color:white; padding:1em;",
+             align = 'center',
+             lapply(list.files("www/logos"), function(x) img(src = file.path("logos", x))),
+             p('El presente tablero es un producto del proyecto "Desarrollo de un sistema de monitoreo y manejo integral de humedales a partir de información satelital", financiado por la Comisión Nacional de Actividades Espaciales (CONAE) en el marco del llamado PROSAT-II.'),
+             p(strong(a("Contacto - Natalia Morandeira", href = "mailto:nmorandeira@unsam.edu.ar")),
+               " - ",
+               strong(a("Código fuente", href = "https://github.com/prosathumedales/catalogo_SARespectral")),
+               " - ",
+               strong("Licencia CC BY SA 4.0"),
+               br(),
+               "La información de ", em("SAOCOM"), " fue generada a partir de productos SAOCOM® Originales – ©CONAE – (2022), adquiridos en el marco del proyecto.",
+               br(),
+               strong("Autoras/es: "), "Natalia Morandeira, Francisco Grings, Mercedes Salvia, Matías Barber, Adriana Rojas Barrios, Mariela Rajngewerc, Maira Gayol, Esteban Roitberg, Elio Campitelli, Priscilla Minotti, Patricia Kandus."
+             )
+      )
 
     )
   )
 )
 
-
-# Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
   observeEvent(input$UP_info, {
