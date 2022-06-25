@@ -16,7 +16,7 @@ names(humedales) <- gsub("_", " ", humedales)
 escenas <- datos[tipo_sensor == "XEMT", unique(tipo_escena)]
 
 polarizaciones <- c("HH", "VH", "VV")
-bandas <- datos[tipo_sensor == "Sentinel-2", unique(banda_nombre)]
+bandas <- datos[tipo_sensor == "Optico", unique(banda_nombre)]
 
 textos_paisajes <- yaml::read_yaml("datos/textos_paisajes.yaml")
 
@@ -77,7 +77,7 @@ alerta <- div(h2("El filtro no devolvió ningún dato"),
               p(style = "display:block;", "Pruebe con otra combinación de filtros"))
 
 ui <- dashboardPage(
-  dashboardHeader(),
+  dashboardHeader(title = "Título de la app"),
   dashboardSidebar(disable = TRUE),
   dashboardBody(
     shinyjs::useShinyjs(),
@@ -96,7 +96,7 @@ ui <- dashboardPage(
       column(width = 4,
              selectInput("tipo_sensor", "Tipo de sensor",
                          choices = c("SAR" = "XEMT",
-                                     "Óptico" = "Sentinel-2"))
+                                     "Óptico" = "Optico"))
       ),
       column(width = 4,
              selectInput("sensor", "Sistema satelital",
@@ -224,7 +224,7 @@ server <- function(input, output, session) {
                            min = as.Date("2006-01-01"))
 
 
-    } else if (input$tipo_sensor == "Sentinel-2") {
+    } else if (input$tipo_sensor == "Optico") {
       shinyjs::disable("tipo_escena")
       shinyjs::disable("angulo_incidencia")
 
