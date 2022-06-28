@@ -14,7 +14,7 @@ La información de SAOCOM fue generada a partir de productos SAOCOM® Originales
 
 **Autoras/es:** Natalia Morandeira, Francisco Grings, Mercedes Salvia, Matías Barber, Adriana Rojas Barrios, Mariela Rajngewerc, Maira Gayol, Esteban Roitberg, Elio Campitelli, Priscilla Minotti, Patricia Kandus.
 
-**Desarrollo de la shinyapp:** Elio Campitelli @eliocamp
+**Desarrollo de la shinyapp:** Elio Campitelli [@eliocamp](https://github.com/eliocamp))
 
 ### Licencia
 [CC BY SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
