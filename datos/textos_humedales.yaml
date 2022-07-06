@@ -5,7 +5,7 @@ I2b:
     Media_lomas_y_bajos_con_mosaico_de_herbaceas:
         titulo: Media lomas y bajos con mosaico de herbáceas
         descripcion: "En las posiciones topográficas intermedias entre los albardones y los bajos, se emplazan pajonales de paja de techar (<em>Coleataenia prionitis</em>), arbustales de rama negra (<em>Sesbania punicea</em>), chilca (<em>Baccharis salicifolia</em>), varillales de duraznillo blanco (<em>Solanum glaucophyllum</em>) y praderas herbáceas con diversas especies dominantes como: carrizo (<em>Hymenachne pernambucense</em>), <em>Hymenachne amplexicaulis</em> y diversas especies de catay (género <em>Polygonum</em>)."
-    Laguna_de_bajos:
+    Lagunas_de_bajos:
         titulo: Lagunas de bajos
         descripcion: "Las posiciones topográficas más bajas presentan lagunas no vegetadas y lagunas vegetadas o bañados. La presencia de vegetación y las condiciones físico-químicas del agua dependen de la conectividad de las lagunas con cursos de agua y del estado hídrico-climático de la planicie de inundación. En las lagunas vegetadas, algunas especies son canutillo (<em>Louisiella elephantipes</em>), <em>Echinochloa polystachya</em>, <em>Paspalum repens</em>, verdolaga (<em>Ludwigia spp.</em>), catay (<em>Polygonum spp.</em>), camalote (<em>Pontederia azurea</em>, <em>Pontederia crassipes</em>), repollito del agua (<em>Pistia stratiotes</em>) y helecho del agua (<em>Salvinia spp.</em>). También hay lagunas con irupé (<em>Victoria cruziana</em>)."
     Espiras_con_bosques:
@@ -25,11 +25,10 @@ I4:
     Media_lomas_y_bajos_con_mosaico_de_herbaceas:
         titulo: Media lomas y bajos con mosaico de herbáceas
         descripcion: En las posiciones topográficas intermedias entre los albardones y los bajos, ocurren praderas de graminiformes altas o pajonales (de hasta 3 m) de paja de techar (<em>Coleataenia prionitis</em>) cuyos individuos llegan ocasionalmente a extenderse hasta el borde de las lagunas. Es frecuente la presencia de arbustos que, como <em>Sesbania virgata</em> o <em>Solanum glaucophyllum</em>, son comunes en ambientes inundables, aunque en esta zona se presentan en forma dispersa. Las fisonomías anteriores presentan, además, herbáceas de distinta altura. La vegetación del borde de las lagunas está constituida por praderas de gramíneas con otras herbáceas bajas.
-    Laguna_de_bajos:
-        titulo: Laguna de bajos
-        descripcion: |
-            La vegetación del borde de las lagunas está constituida por praderas de gramíneas con otras herbáceas bajas.
-            Las posiciones topográficas más bajas presentan lagunas no vegetadas y lagunas vegetadas o bañados. La presencia de vegetación y las condiciones físico-químicas del agua dependen de la conectividad de las lagunas con cursos de agua y del estado hídrico-climático de la planicie de inundación. En las lagunas vegetadas, algunas especies son canutillo (<em>Louisiella elephantipes</em>), <em>Echinochloa polystachya</em>, <em>Paspalum repens</em>, verdolaga (<em>Ludwigia spp.</em>), catay (<em>Polygonum spp.</em>), camalote (<em>Pontederia azurea<em>, <em>Pontederia crassipes</em>), repollito del agua (<em>Pistia stratiotes</em>) y helecho de agua (<em>Salvinia spp.</em>). También hay lagunas con irupé (<em>Victoria cruziana</em>).
+    Lagunas_de_bajos:
+        titulo: Lagunas de bajos
+        descripcion: La vegetación del borde de las lagunas está constituida por praderas de gramíneas con otras herbáceas bajas.
+            Las posiciones topográficas más bajas presentan lagunas no vegetadas y lagunas vegetadas o bañados. La presencia de vegetación y las condiciones físico-químicas del agua dependen de la conectividad de las lagunas con cursos de agua y del estado hídrico-climático de la planicie de inundación. En las lagunas vegetadas, algunas especies son canutillo (<em>Louisiella elephantipes</em>), <em>Echinochloa polystachya</em>, <em>Paspalum repens</em>, verdolaga (<em>Ludwigia spp.</em>), catay (<em>Polygonum spp.</em>), camalote (<em>Pontederia azurea</em>, <em>Pontederia crassipes</em>), repollito del agua (<em>Pistia stratiotes</em>) y helecho de agua (<em>Salvinia spp.</em>). También hay lagunas con irupé (<em>Victoria cruziana</em>).
     Espiras_con_bosques:
         titulo: Espiras con bosques
         descripcion: Las espiras son posiciones relativamente altas, de forma alargada, que en esta unidad presentan bosques bajos de curupí (<em>Sapium haematospermum</em>) y timbó blanco (<em>Albizia inundata</em>). Ciertos relictos de espiras antiguas presentan bosques abiertos con sauce (<em>Salix humboldtiana</em>) o aliso (<em>Tessaria integrifolia</em>).
