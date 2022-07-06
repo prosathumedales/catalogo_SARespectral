@@ -10,13 +10,20 @@ source("scripts/plot-serie.R")
 DT <- `[`
 
 datos <- readRDS("datos/datos.Rds")
+
+datos$sensor <- ifelse(datos$sensor == "SENTINEL", "Sentinel-1", datos$sensor)
+datos$sensor <- ifelse(datos$sensor == "ALOS", "ALOS/PALSAR-1", datos$sensor)
+
+
 humedales <- unique(datos$tipo_humed)
 names(humedales) <- gsub("_", " ", humedales)
 
-escenas <- datos[tipo_sensor == "XEMT", unique(tipo_escena)]
+# escenas <- datos[tipo_sensor == "XEMT", unique(tipo_escena)]
 
 polarizaciones <- c("HH", "VH", "VV")
-bandas <- datos[tipo_sensor == "Optico", unique(banda_nombre)]
+
+bandas_interes <- c("B2",  "B3", "B4", "B5", "B6", "B7", "B8", "B11", "B12")
+names(bandas_interes) <- c("Azul",  "Verde", "Rojo", "Borde rojo 1", "Borde rojo 2", "Borde rojo 3", "IR cercano", "IR medio 1", "IR medio 2")
 
 textos_paisajes <- yaml::read_yaml("datos/textos_paisajes.yaml")
 
@@ -24,10 +31,13 @@ textos_paisajes <- yaml::read_yaml("datos/textos_paisajes.yaml")
 descripcionUPModal <- function(datos) {
   modalDialog(
     title = h2(datos[["titulo"]]),
-    h3("Descripcion:"),
+    footer = modalButton("Cerrar"),
+    h3("Descripción"),
     p(datos[["descripcion"]]),
-    h3("Contexto en el Inventario Nacional de Humedales:"),
-    p(datos[["contexto"]])
+    h3("Contexto en el Inventario Nacional de Humedales"),
+    p(datos[["contexto"]]),
+
+
   )
 }
 
@@ -51,6 +61,7 @@ detallesServer <- function(id, datos) {
           showModal(
             modalDialog(
               title = h2(datos[["titulo"]]),
+              footer = modalButton("Cerrar"),
               p(HTML(datos[["descripcion"]]))
             )
           )
@@ -67,8 +78,7 @@ textos_humedales <- yaml::read_yaml("datos/textos_humedales.yaml")
 humedales_names <- function(humedales) {
   unname(lapply(seq_along(humedales), function(h)
     span(humedales[[h]]$titulo,
-         detallesUI(names(humedales)[[h]]),
-         title = humedales[[h]]$descripcion)
+         detallesUI(names(humedales)[[h]]))
   ))
 }
 
@@ -77,66 +87,108 @@ alerta <- div(h2("El filtro no devolvió ningún dato"),
               p(style = "display:block;", "Pruebe con otra combinación de filtros"))
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Título de la app"),
+
+  dashboardHeader(titleWidth = "100%",
+                  title = "Catálogo de respuestas de sistemas satelitales SAR y ópticos multiespectrales "),
   dashboardSidebar(disable = TRUE),
   dashboardBody(
     shinyjs::useShinyjs(),
-    fluidRow(
-      column(width = 4,
-             selectInput("UP", "Unidad de paisaje",
-                         choices = c("I4", "I2b")),
-             actionButton("UP_info", shiny::icon("question-sign", lib = "glyphicon"),
-                          style = "display:inline-block")
-      ),
-      column(width = 8,
-             uiOutput("tipo_humed_checkbox")
-      )
+    # dashboardthemes::shinyDashboardThemes(
+    #   theme = "blue_gradient"
+    # ),
+    # From https://community.rstudio.com/t/shiny-how-to-center-and-fix-width-of-dashboard/3575/5
+    tags$style("html,body{background-color: white;}
+                .container{
+                    width: 100%;
+                    margin: 0 auto;
+                    padding: 0;
+                }
+                #myimg{
+                    width:30%;
+                }
+               @media screen and (min-width: 800px){
+                .container{
+                    width: 800px;
+                }
+               }"),
+    tags$style(".btn-default {
+                  background-color: #fafafa;
+               }"
     ),
-    fluidRow(
-      column(width = 4,
-             selectInput("tipo_sensor", "Tipo de sensor",
-                         choices = c("SAR" = "XEMT",
-                                     "Óptico" = "Optico"))
-      ),
-      column(width = 4,
-             selectInput("sensor", "Sistema satelital",
-                         choices = "")
-      ),
-      column(width = 4,
-             shinyjs::disabled(
-               selectInput("tipo_escena", "Tipo de escena",
-                           choices = escenas, multiple = TRUE))
-      )
-    ),
-    fluidRow(
-      column(width = 4,
-             shinyjs::disabled(
-               sliderInput("angulo_incidencia", "Ángulo de incidencia",
-                           min = 2, max = 50, value = c(2, 50)))
-      ),
-      column(width = 4,
-             selectInput("banda_nombre", "Polarización",
-                         choices = polarizaciones, multiple = TRUE,
-                         selected = polarizaciones)
-      ),
-      column(width = 4,
-             dateRangeInput("rango_fechas", "Rango de fechas",
-                            language = "es",
-                            start = min(datos$fecha),
-                            min = min(datos$fecha))
-      )
-    ),
-    fluidRow(
-      tabBox(width = 12,
-             tabPanel("Boxplot", uiOutput("boxplot_ph")),
-             tabPanel("Serie temporal", uiOutput("serie_ph"))
-      )
+    tags$style("body {
+                font-size: 160%;
+               }"),
+    div(class="container",
+        fluidRow(style = "margin:1.5em;",
+                 column(style = "background-color:white; padding:1em;",
+                        width = 12,
+                        h3("Humedales del Delta Superior - Sitio Ramsar (Santa Fe, Argentina)"),
+                        p("¿Qué información podemos obtener de los humedales del Delta Superior con datos satelitales? Esta herramienta permite explorar el comportamiento medio de áreas representativas de distintos tipos de humedal del Delta Superior (Sitio Ramsar Delta del Paraná). Al seleccionar la Unidad de paisaje de humedales (actualmente disponibles I4 o I2b), el tipo de humedal, las características del sistema satelital y el rango de fechas de las escenas satelitales, se obtienen gráficos resumen. Los datos satelitales disponibles para la consulta corresponden a los sistemas de microondas activas (SAR) SAOCOM, Sentinel-1 y ALOS/PALSAR-1 y del óptico Sentinel-2. Los gráficos se realizan en dos opciones: boxplots (SAR) o firmas espectrales (óptico) que muestran la variabilidad espacio-temporal; y series temporales en las que se grafica el valor medio a lo largo del tiempo.")
+                 )
+        ),
+
+
+        fluidRow(
+          column(width = 4,
+                 selectInput("UP", "Unidad de paisaje de humedales",
+                             choices = c("I4", "I2b")),
+                 actionButton("UP_info", shiny::icon("question-sign", lib = "glyphicon"))
+          ),
+          column(width = 8,
+                 uiOutput("tipo_humed_checkbox")
+          )
+        ),
+        fluidRow(
+          column(width = 6,
+                 selectInput("tipo_sensor", "Tipo de sensor satelital",
+                             choices = c("SAR (microondas activas)" = "XEMT",
+                                         "Óptico" = "Optico"))
+          ),
+          column(width = 6,
+                 selectInput("sensor", "Sistema satelital",
+                             choices = "")
+          ),
+          # Se eliminar por comentarios
+          # column(width = 4,
+          #        shinyjs::disabled(
+          #          selectInput("tipo_escena", "Tipo de escena",
+          #                      choices = escenas, multiple = TRUE))
+          # )
+        ),
+        fluidRow(
+          column(width = 4,
+                 shinyjs::disabled(
+                   sliderInput("angulo_incidencia", "Ángulo de incidencia (señal SAR)",
+                               min = 20, max = 50, value = c(20, 50),
+                               post = "º"))
+          ),
+          column(width = 4,
+                 selectInput("banda_nombre", "Polarización",
+                             choices = polarizaciones, multiple = TRUE,
+                             selected = polarizaciones)
+          ),
+          column(width = 4,
+                 dateRangeInput("rango_fechas", "Rango de fechas",
+                                language = "es",
+                                separator = "a",
+                                format = "dd/mm/yyyy",
+                                start = min(datos$fecha),
+                                min = min(datos$fecha)),
+                 tags$style(HTML(".datepicker {z-index:99999 !important;}"))
+          )
+        ),
+        fluidRow(
+          tabBox(width = 12,
+                 tabPanel("Boxplot", uiOutput("boxplot_ph")),
+                 tabPanel("Serie temporal", uiOutput("serie_ph"))
+          )
+        )
     ),
     fluidRow(
       column(width = 12,
              style = "background-color:white; padding:1em;",
              align = 'center',
-             lapply(list.files("www/logos"), function(x) img(src = file.path("logos", x))),
+             div(style = "margin:0.4em;", lapply(list.files("www/logos"), function(x) div(style = "margin:0.5em;display:inline;", img(src = file.path("logos", x), height = 40)))),
              p('El presente tablero es un producto del proyecto "Desarrollo de un sistema de monitoreo y manejo integral de humedales a partir de información satelital", financiado por la Comisión Nacional de Actividades Espaciales (CONAE) en el marco del llamado PROSAT-II.'),
              p(strong(a("Contacto - Natalia Morandeira", href = "mailto:nmorandeira@unsam.edu.ar")),
                " - ",
@@ -159,8 +211,6 @@ ui <- dashboardPage(
              a("Benzaquén et al. 2017 - Regiones de humedales de la Argentina",
                href = "https://www.argentina.gob.ar/sites/default/files/regioneshumedbaja2.pdf")
       )
-
-
     )
   )
 )
@@ -181,13 +231,13 @@ server <- function(input, output, session) {
                       selected = choices[1])
   })
 
-  observe({
-
-    escenas <-  datos[tipo_sensor == input$tipo_sensor, unique(tipo_escena)]
-    updateSelectInput(inputId = "tipo_escena",
-                      choices = escenas,
-                      selected = escenas)
-  })
+  # observe({
+  #
+  #   escenas <-  datos[tipo_sensor == input$tipo_sensor, unique(tipo_escena)]
+  #   updateSelectInput(inputId = "tipo_escena",
+  #                     choices = escenas,
+  #                     selected = escenas)
+  # })
 
 
   output$tipo_humed_checkbox <- renderUI({
@@ -199,7 +249,7 @@ server <- function(input, output, session) {
 
     checkboxGroupButtons(
       inputId = "tipo_humed",
-      label = "Tipo de humedal:",
+      label = "Seleccionar uno o más tipos de humedales a graficar",
       individual = TRUE,
       choiceNames = humedales_names(humedales),
       choiceValues = names(humedales),
@@ -213,8 +263,11 @@ server <- function(input, output, session) {
 
   observe({
     if (input$tipo_sensor == "XEMT") {
-      shinyjs::enable("tipo_escena")
+      # shinyjs::enable("tipo_escena")
       shinyjs::enable("angulo_incidencia")
+
+      # Algunos sistemas satelitales tienen VH y otros HV
+      polarizaciones <- datos[tipo_sensor == input$tipo_sensor, unique(polarizaciones)]
 
       updateSelectInput(inputId = "banda_nombre",
                         label = "Polarización",
@@ -225,13 +278,13 @@ server <- function(input, output, session) {
 
 
     } else if (input$tipo_sensor == "Optico") {
-      shinyjs::disable("tipo_escena")
+      # shinyjs::disable("tipo_escena")
       shinyjs::disable("angulo_incidencia")
 
       updateSelectInput(inputId = "banda_nombre",
                         label = "Bandas",
-                        choices = bandas,
-                        selected = bandas)
+                        choices = bandas_interes,
+                        selected = bandas_interes)
 
       updateDateRangeInput(inputId = "rango_fechas",
                            min = as.Date("1984-01-01"))
@@ -250,6 +303,15 @@ server <- function(input, output, session) {
     if (input$tipo_sensor == "XEMT") {
       datos <- datos[angulo_incidencia %between% input$angulo_incidencia]
     }
+
+    if (input$tipo_sensor == "Optico") {
+      datos[, banda_nombre := factor(banda_nombre,
+                                     levels = bandas_interes,
+                                     labels = names(bandas_interes),
+                                     ordered = TRUE)]
+    }
+
+
 
     datos
   })
