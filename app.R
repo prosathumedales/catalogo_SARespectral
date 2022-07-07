@@ -28,6 +28,7 @@ textos_paisajes <- yaml::read_yaml("datos/textos_paisajes.yaml")
 
 descripcionUPModal <- function(datos) {
   modalDialog(
+    easyClose = TRUE,
     title = h2(datos[["titulo"]]),
     footer = modalButton("Cerrar"),
     h3("Descripción"),
@@ -58,6 +59,7 @@ detallesServer <- function(id, datos) {
         if (is.null(original) || input$detalles > original) {
           showModal(
             modalDialog(
+              easyClose = TRUE,
               title = h2(datos[["titulo"]]),
               footer = modalButton("Cerrar"),
               p(HTML(datos[["descripcion"]]))
