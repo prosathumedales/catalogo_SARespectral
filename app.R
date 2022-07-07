@@ -181,12 +181,21 @@ ui <- dashboardPage(
                  ),
           ),
           column(width = 6,
-                 dateRangeInput("rango_fechas", "Rango de fechas",
+                 dateRangeInput("rango_fechas",
+                                HTML(paste0("Rango de fechas <small>(",
+                                            format(min(datos$fecha), "%d/%m/%Y"),
+                                            " &ndash; ",
+                                            format(max(datos$fecha), "%d/%m/%Y"),
+                                            ")</small>")
+                                     ),
                                 language = "es",
                                 separator = "a",
                                 format = "dd/mm/yyyy",
                                 start = min(datos$fecha),
-                                min = min(datos$fecha)),
+                                min = min(datos$fecha),
+                                end = max(datos$fecha),
+                                max = max(datos$fecha),
+                                ),
                  tags$style(HTML(".datepicker {z-index:99999 !important;}"))
           )
         ),
@@ -289,8 +298,20 @@ server <- function(input, output, session) {
         selected = polarizaciones
       )
 
+
       updateDateRangeInput(inputId = "rango_fechas",
-                           min = as.Date("2006-01-01"))
+                     start = as.Date("2006-01-01"),
+                     min = as.Date("2006-01-01")
+      )
+      # updateDateRangeInput no funciona con html en el label
+      # https://github.com/rstudio/shiny/issues/3079
+      shinyjs::html(id = "rango_fechas-label",
+                    html = paste0("Rango de fechas </br><small>Datos entre ",
+                                  format(as.Date("2006-01-01"), "%d/%m/%Y"),
+                                  " y ",
+                                  format(max(datos_select()$fecha), "%d/%m/%Y"),
+                                  "</small>"))
+
 
 
     } else if (input$tipo_sensor == "Optico") {
@@ -305,7 +326,18 @@ server <- function(input, output, session) {
       )
 
       updateDateRangeInput(inputId = "rango_fechas",
-                           min = as.Date("1984-01-01"))
+                           start = as.Date("1984-01-01"),
+                           min = as.Date("1984-01-01")
+      )
+      # updateDateRangeInput no funciona con html en el label
+      # https://github.com/rstudio/shiny/issues/3079
+      shinyjs::html(id = "rango_fechas-label",
+                    html = paste0("Rango de fechas </br><small>Datos entre ",
+                                  format(as.Date("1984-01-01"), "%d/%m/%Y"),
+                                  " y ",
+                                  format(max(datos_select()$fecha), "%d/%m/%Y"),
+                                  "</small>"))
+
     }
   })
 
