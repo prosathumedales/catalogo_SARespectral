@@ -5,10 +5,10 @@ account: eliocamp
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6302944
-bundleId: 6075163
+bundleId: 6079646
 url: https://eliocamp.shinyapps.io/conae/
-when: 1657121821.6799
-lastSyncTime: 1657121821.6799
+when: 1657225914.2253
+lastSyncTime: 1657225914.2253
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: datos_raw/PROSAT_DeltaSuperior_Optico_Sentinel2_UPI2b_2022-06-01_revisado.csv|datos_raw/PROSAT_DeltaSuperior_Optico_Sentinel2_UPI4_2022-06-01_revisado.csv|datos_raw/PROSAT_DeltaSuperior_SAR_ALOS_2022-06-26_revisado.csv|datos_raw/PROSAT_DeltaSuperior_SAR_SAOCOM_2022-06-24_revisado.csv|datos_raw/PROSAT_DeltaSuperior_SAR_SENTINEL1_2022-06-14_revisado.csv|logos_raw/EHyS-01 logo.png|logos_raw/LOGO IIIA 3iaV4 corregido.pdf|logos_raw/logo_funintec.png|logos_raw/logo_iafe.JPG|plumber.R|procesamiento_datos.R|textos_descriptivos.docx
+ignoredFiles: datos_raw/PROSAT_DeltaSuperior_Optico_Sentinel2_UPI2b_2022-06-01_revisado.csv|datos_raw/PROSAT_DeltaSuperior_Optico_Sentinel2_UPI4_2022-06-01_revisado.csv|datos_raw/PROSAT_DeltaSuperior_SAR_ALOS_2022-06-26_revisado.csv|datos_raw/PROSAT_DeltaSuperior_SAR_SAOCOM_2022-06-24_revisado.csv|datos_raw/PROSAT_DeltaSuperior_SAR_SENTINEL1_2022-06-14_revisado.csv|logos_raw/EHyS-01 logo.png|logos_raw/LOGO IIIA 3iaV4 corregido.pdf|logos_raw/logo_funintec.png|logos_raw/logo_iafe.JPG|procesamiento_datos.R|README.md|textos_descriptivos.docx
