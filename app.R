@@ -130,24 +130,37 @@ ui <- dashboardPage(
 
         fluidRow(
           column(width = 4,
+                 column(width = 10,
                  selectInput("UP", "Unidad de paisaje de humedales",
-                             choices = c("I4", "I2b")),
-                 actionButton("UP_info", shiny::icon("question-sign", lib = "glyphicon"))
+                             choices = c("I4", "I2b"))
+                 ),
+                 column(width = 1,
+                 actionButton("UP_info", shiny::icon("question-sign", lib = "glyphicon"),
+                              style = "margin-top: 50px")
+                 )
           ),
           column(width = 8,
                  uiOutput("tipo_humed_checkbox")
           )
         ),
         fluidRow(
-          column(width = 6,
+          column(width = 4,
                  selectInput("tipo_sensor", "Tipo de sensor satelital",
                              choices = c("SAR (microondas activas)" = "XEMT",
                                          "Óptico" = "Optico"))
           ),
-          column(width = 6,
+          column(width = 4,
+
                  selectInput("sensor", "Sistema satelital",
                              choices = "")
           ),
+          column(width = 4,
+                 shinyjs::disabled(
+                   sliderInput("angulo_incidencia", "Ángulo de incidencia (señal SAR)",
+                               min = 20, max = 50, value = c(20, 50),
+                               post = "º"))
+          )
+
           # Se eliminar por comentarios
           # column(width = 4,
           #        shinyjs::disabled(
@@ -156,18 +169,16 @@ ui <- dashboardPage(
           # )
         ),
         fluidRow(
-          column(width = 4,
-                 shinyjs::disabled(
-                   sliderInput("angulo_incidencia", "Ángulo de incidencia (señal SAR)",
-                               min = 20, max = 50, value = c(20, 50),
-                               post = "º"))
+          column(width = 6,
+                 checkboxGroupButtons(
+                   inputId = "banda_nombre",
+                   label = "Polarización",
+                   individual = TRUE,
+                   choices = polarizaciones,
+                   selected = polarizaciones
+                 ),
           ),
-          column(width = 4,
-                 selectInput("banda_nombre", "Polarización",
-                             choices = polarizaciones, multiple = TRUE,
-                             selected = polarizaciones)
-          ),
-          column(width = 4,
+          column(width = 6,
                  dateRangeInput("rango_fechas", "Rango de fechas",
                                 language = "es",
                                 separator = "a",
@@ -269,10 +280,13 @@ server <- function(input, output, session) {
       # Algunos sistemas satelitales tienen VH y otros HV
       polarizaciones <- datos[tipo_sensor == input$tipo_sensor, unique(polarizaciones)]
 
-      updateSelectInput(inputId = "banda_nombre",
-                        label = "Polarización",
-                        choices = polarizaciones,
-                        selected = polarizaciones)
+      updateCheckboxGroupButtons(
+        inputId = "banda_nombre",
+        label = "Polarización",
+        choices = polarizaciones,
+        selected = polarizaciones
+      )
+
       updateDateRangeInput(inputId = "rango_fechas",
                            min = as.Date("2006-01-01"))
 
@@ -281,10 +295,12 @@ server <- function(input, output, session) {
       # shinyjs::disable("tipo_escena")
       shinyjs::disable("angulo_incidencia")
 
-      updateSelectInput(inputId = "banda_nombre",
-                        label = "Bandas",
-                        choices = bandas_interes,
-                        selected = bandas_interes)
+      updateCheckboxGroupButtons(
+        inputId = "banda_nombre",
+        label = "Bandas",
+        choices = bandas_interes,
+        selected = bandas_interes
+      )
 
       updateDateRangeInput(inputId = "rango_fechas",
                            min = as.Date("1984-01-01"))
