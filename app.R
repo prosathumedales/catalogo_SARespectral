@@ -14,16 +14,14 @@ datos <- readRDS("datos/datos.Rds")
 datos$sensor <- ifelse(datos$sensor == "SENTINEL", "Sentinel-1", datos$sensor)
 datos$sensor <- ifelse(datos$sensor == "ALOS", "ALOS/PALSAR-1", datos$sensor)
 
-
-humedales <- unique(datos$tipo_humed)
-names(humedales) <- gsub("_", " ", humedales)
-
 # escenas <- datos[tipo_sensor == "XEMT", unique(tipo_escena)]
 
 polarizaciones <- c("HH", "VH", "VV")
 
 bandas_interes <- c("B2",  "B3", "B4", "B5", "B6", "B7", "B8", "B11", "B12")
-names(bandas_interes) <- c("Azul",  "Verde", "Rojo", "Borde rojo 1", "Borde rojo 2", "Borde rojo 3", "IR cercano", "IR medio 1", "IR medio 2")
+names(bandas_interes) <- c("Azul",  "Verde", "Rojo", "Borde rojo 1",
+                           "Borde rojo 2", "Borde rojo 3", "IR cercano",
+                           "IR medio 1", "IR medio 2")
 
 textos_paisajes <- yaml::read_yaml("datos/textos_paisajes.yaml")
 
@@ -75,13 +73,17 @@ detallesServer <- function(id, datos) {
 
 textos_humedales <- yaml::read_yaml("datos/textos_humedales.yaml")
 
+# Ordeno alfabéticamente
+textos_humedales <- lapply(textos_humedales, function(x) {
+  x[order(names(x))]
+})
+
 humedales_names <- function(humedales) {
   unname(lapply(seq_along(humedales), function(h)
     span(humedales[[h]]$titulo,
          detallesUI(names(humedales)[[h]]))
   ))
 }
-
 
 alerta <- div(h2("El filtro no devolvió ningún dato"),
               p(style = "display:block;", "Pruebe con otra combinación de filtros"))
@@ -131,12 +133,12 @@ ui <- dashboardPage(
         fluidRow(
           column(width = 4,
                  column(width = 10,
-                 selectInput("UP", "Unidad de paisaje de humedales",
-                             choices = c("I4", "I2b"))
+                        selectInput("UP", "Unidad de paisaje de humedales",
+                                    choices = c("I4", "I2b"))
                  ),
                  column(width = 1,
-                 actionButton("UP_info", shiny::icon("question-sign", lib = "glyphicon"),
-                              style = "margin-top: 50px")
+                        actionButton("UP_info", shiny::icon("question-sign", lib = "glyphicon"),
+                                     style = "margin-top: 50px")
                  )
           ),
           column(width = 8,
