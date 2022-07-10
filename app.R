@@ -189,7 +189,7 @@ ui <- dashboardPage(
                                             " &ndash; ",
                                             format(max(datos$fecha), "%d/%m/%Y"),
                                             ")</small>")
-                                     ),
+                                ),
                                 language = "es",
                                 separator = "a",
                                 format = "dd/mm/yyyy",
@@ -197,7 +197,7 @@ ui <- dashboardPage(
                                 min = min(datos$fecha),
                                 end = max(datos$fecha),
                                 max = max(datos$fecha),
-                                ),
+                 ),
                  tags$style(HTML(".datepicker {z-index:99999 !important;}"))
           )
         ),
@@ -302,8 +302,8 @@ server <- function(input, output, session) {
 
 
       updateDateRangeInput(inputId = "rango_fechas",
-                     start = as.Date("2006-01-01"),
-                     min = as.Date("2006-01-01")
+                           start = as.Date("2006-01-01"),
+                           min = as.Date("2006-01-01")
       )
       # updateDateRangeInput no funciona con html en el label
       # https://github.com/rstudio/shiny/issues/3079
@@ -323,8 +323,8 @@ server <- function(input, output, session) {
       updateCheckboxGroupButtons(
         inputId = "banda_nombre",
         label = "Bandas",
-        choices = bandas_interes,
-        selected = bandas_interes
+        choices = c(bandas_interes, indices_sinteticos),
+        selected = c(bandas_interes, indices_sinteticos)
       )
 
       updateDateRangeInput(inputId = "rango_fechas",
@@ -371,27 +371,35 @@ server <- function(input, output, session) {
 
   output$boxplot_ph <- renderUI({
 
+
     if (nrow(datos_select()) == 0) {
       alerta
     } else {
       plotOutput("boxplot_plot")
+
     }
   })
+
   output$boxplot_plot <- renderPlot({
     req(nrow(datos_select()) > 0)
-    plot_boxplot(datos_select())
+    if (isolate(input$tipo_sensor) == "SAR") {
+      plot_boxplot(datos_select())
+    } else {
+      plot_respuesta_polarimetrica(datos_select())
+    }
   })
 
   output$serie_ph <- renderUI({
     if (nrow(datos_select()) == 0) {
       alerta
     } else {
-      plotOutput("serie_plot")
+      plotOutput("serie_plot_sar")
     }
   })
-  output$serie_plot <- renderPlot({
+
+  output$serie_plot_sar <- renderPlot({
     req(nrow(datos_select()) > 0)
-    plot_serie(datos_select())
+    plot_serie_sar(datos_select())
   })
 
 
