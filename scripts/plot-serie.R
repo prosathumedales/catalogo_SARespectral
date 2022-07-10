@@ -46,7 +46,7 @@ plot_serie_sar <- function(datos) {
     geom_point(aes(color = banda_nombre)) +
     labs(title = title) +
     theme_minimal() +
-    scale_x_date("Fecha") +
+    scale_x_date("Fecha", date_labels = "%m/%Y") +
     scale_y_continuous("Retrodispersión (decibeles)") +
 
     scale_color_manual(color_lab, values = paleta_bandas,
