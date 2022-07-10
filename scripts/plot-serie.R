@@ -39,6 +39,8 @@ plot_serie_sar <- function(datos) {
     color_lab <- "Índice Sintético"
   }
 
+  paleta_bandas <- paleta_bandas[names(paleta_bandas) %in% unique(datos$banda_nombre)]
+
   datos[, .(valor_promedio = mean(valor_promedio)), by = .(fecha, tipo_humed, banda_nombre)] |>
     ggplot(aes(fecha, decibel(valor_promedio))) +
     geom_line(aes(group = interaction(tipo_humed, banda_nombre),
