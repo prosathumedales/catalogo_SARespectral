@@ -12,6 +12,16 @@ names(paleta_humedales) <-  gsub("_", " ", names(textos_humedales[[1]]))
 indices_sinteticos <- c("NDVI", "EVI", "NDWI")
 polarizaciones <- c("HH", "HV", "VH", "VV")
 
+
+paleta_bandas <- c(NDVI = "#1b9e77",
+                   EVI = "#d95f02",
+                   NDWI = "#7570b3",
+                   HH = "#1b9e77",
+                   HV = "#d95f02",
+                   VH = "#d95f02",
+                   VV = "#7570b3"
+                   )
+
 plot_serie_sar <- function(datos) {
   fechas <- range(datos$fecha)
   fechas <- paste0(fechas, collapse = " a ")
@@ -20,8 +30,14 @@ plot_serie_sar <- function(datos) {
                   fechas,
                   " con datos satelitales ", sensor)
 
-  # datos <- datos[banda_nombre %in% c(indices_sinteticos,
-  #                                    polarizaciones)]
+  datos <- datos[banda_nombre %in% c(indices_sinteticos,
+                                     polarizaciones)]
+
+  if (sensor == "SAR") {
+    color_lab <- "Polarización"
+  } else {
+    color_lab <- "Índice Sintético"
+  }
 
   datos[, .(valor_promedio = mean(valor_promedio)), by = .(fecha, tipo_humed, banda_nombre)] |>
     ggplot(aes(fecha, decibel(valor_promedio))) +
@@ -32,40 +48,12 @@ plot_serie_sar <- function(datos) {
     theme_minimal() +
     scale_x_date("Fecha") +
     scale_y_continuous("Retrodispersión (decibeles)") +
-    # scale_color_manual("Tipo de Humedal", values = paleta_humedales, limits = force,
-    #                    guide = guide_legend(title.position = "top",
-    #                                         keywidth = grid::unit(1, "lines"))) +
+
+    scale_color_manual(color_lab, values = paleta_bandas,
+                       guide = guide_legend(title.position = "top",
+                                            keywidth = grid::unit(1, "lines"))) +
     theme(legend.direction = "horizontal", legend.position = "bottom")  +
     facet_wrap(~gsub("_", " ", tipo_humed), ncol = 2)
 
 }
 
-
-
-plot_serie_optico <- function(datos) {
-  fechas <- range(datos$fecha)
-  fechas <- paste0(fechas, collapse = " a ")
-  sensor <- unique(datos$tipo_sensor)
-  title <- paste0("Dinámica temporal del tipo de humedal en el período ",
-                  fechas,
-                  " con datos satelitales ", sensor)
-
-  # datos <- datos[banda_nombre %in% c(indices_sinteticos,
-  #                                    polarizaciones)]
-
-  datos[, .(valor_promedio = mean(valor_promedio)), by = .(fecha, tipo_humed, banda_nombre)] |>
-    ggplot(aes(fecha, decibel(valor_promedio))) +
-    geom_line(aes(group = interaction(tipo_humed, banda_nombre),
-                  color = banda_nombre)) +
-    geom_point(aes(color = banda_nombre)) +
-    labs(title = title) +
-    theme_minimal() +
-    scale_x_date("Fecha") +
-    scale_y_continuous("Retrodispersión (decibeles)") +
-    # scale_color_manual("Tipo de Humedal", values = paleta_humedales, limits = force,
-    #                    guide = guide_legend(title.position = "top",
-    #                                         keywidth = grid::unit(1, "lines"))) +
-    theme(legend.direction = "horizontal", legend.position = "bottom")  +
-    facet_wrap(~gsub("_", " ", tipo_humed), ncol = 2)
-
-}

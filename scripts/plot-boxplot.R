@@ -15,7 +15,7 @@ names(bandas_interes) <- c("Azul",  "Verde", "Rojo", "Borde rojo 1",
                            "Borde rojo 2", "Borde rojo 3", "IR cercano",
                            "IR medio 1", "IR medio 2")
 
-lambdas <- data.table(banda_nombre = names(bandas_interes),
+lambdas <- data.table(banda_nombre = unname(bandas_interes),
                       lambda = bandas_interes_lambda)
 
 plot_boxplot <- function(datos) {
@@ -49,8 +49,7 @@ plot_respuesta_polarimetrica <- function(datos) {
                   fechas,
                   " con datos satelitales ", sensor)
 
-  datos <- datos |>
-    DT(, .(valor_promedio = mean(valor_promedio)), by = .(tipo_humed, banda_nombre))
+  datos <- datos[, .(valor_promedio = mean(valor_promedio)), by = .(tipo_humed, banda_nombre)]
 
   lambdas[datos,  on  = "banda_nombre"] |>
     ggplot(aes(lambda, valor_promedio)) +

@@ -289,7 +289,7 @@ server <- function(input, output, session) {
     if (input$tipo_sensor == "SAR") {
       # shinyjs::enable("tipo_escena")
       shinyjs::enable("angulo_incidencia")
-
+      shinyjs::enable("banda_nombre")
       # Algunos sistemas satelitales tienen VH y otros HV
       polarizaciones <- datos[sensor == input$sensor, unique(banda_nombre)]
 
@@ -300,6 +300,9 @@ server <- function(input, output, session) {
         selected = polarizaciones
       )
 
+      # No parece funcionar el update del label
+      shinyjs::html(id = "banda_nombre-label",
+                    html = "Polarización")
 
       updateDateRangeInput(inputId = "rango_fechas",
                            start = as.Date("2006-01-01"),
@@ -311,21 +314,28 @@ server <- function(input, output, session) {
                     html = paste0("Rango de fechas </br><small>Datos entre ",
                                   format(as.Date("2006-01-01"), "%d/%m/%Y"),
                                   " y ",
-                                  format(max(datos_select()$fecha), "%d/%m/%Y"),
+                                  format(max(datos[tipo_sensor == input$tipo_sensor]$fecha), "%d/%m/%Y"),
                                   "</small>"))
 
 
 
     } else if (input$tipo_sensor == "Optico") {
+      # browser()
       # shinyjs::disable("tipo_escena")
       shinyjs::disable("angulo_incidencia")
-
+      # shinyjs::disable("banda_nombre")
       updateCheckboxGroupButtons(
         inputId = "banda_nombre",
-        label = "Bandas",
-        choices = c(bandas_interes, indices_sinteticos),
-        selected = c(bandas_interes, indices_sinteticos)
+        label = "Índices Sintéticos",
+        choices = indices_sinteticos,
+        selected = unname(indices_sinteticos)
       )
+
+      shinyjs::html(id = "banda_nombre-label",
+                    html = "Índices Sintéticos")
+
+
+
 
       updateDateRangeInput(inputId = "rango_fechas",
                            start = as.Date("1984-01-01"),
@@ -337,7 +347,7 @@ server <- function(input, output, session) {
                     html = paste0("Rango de fechas </br><small>Datos entre ",
                                   format(as.Date("1984-01-01"), "%d/%m/%Y"),
                                   " y ",
-                                  format(max(datos_select()$fecha), "%d/%m/%Y"),
+                                  format(max(datos[tipo_sensor == input$tipo_sensor]$fecha), "%d/%m/%Y"),
                                   "</small>"))
 
     }
@@ -349,21 +359,16 @@ server <- function(input, output, session) {
       DT(tipo_sensor == input$tipo_sensor) |>
       DT(rep(is.null(input$tipo_humed), .N) | tipo_humed %in% input$tipo_humed) |>
       DT(sensor == input$sensor) |>
-      DT(fecha %between% input$rango_fechas) |>
-      DT(banda_nombre %in% input$banda_nombre)
+      DT(fecha %between% input$rango_fechas)
 
     if (input$tipo_sensor == "SAR") {
-      datos <- datos[angulo_incidencia %between% input$angulo_incidencia]
+      datos <- datos[angulo_incidencia %between% input$angulo_incidencia] |>
+        DT(banda_nombre %in% input$banda_nombre)
     }
 
     if (input$tipo_sensor == "Optico") {
-      datos[, banda_nombre := factor(banda_nombre,
-                                     levels = bandas_interes,
-                                     labels = names(bandas_interes),
-                                     ordered = TRUE)]
+      datos <- datos[banda_nombre %in% c(unname(bandas_interes), input$banda_nombre)]
     }
-
-
 
     datos
   })
