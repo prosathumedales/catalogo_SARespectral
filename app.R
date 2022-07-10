@@ -150,7 +150,7 @@ ui <- dashboardPage(
         fluidRow(
           column(width = 4,
                  selectInput("tipo_sensor", "Tipo de sensor satelital",
-                             choices = c("SAR (microondas activas)" = "XEMT",
+                             choices = c("SAR (microondas activas)" = "SAR",
                                          "Óptico" = "Optico"))
           ),
           column(width = 4,
@@ -249,7 +249,7 @@ server <- function(input, output, session) {
 
 
   observe({
-    choices <- datos[tipo_sensor == input$tipo_sensor, unique(sensor)]
+    choices <- datos[tipo_sensor == input$tipo_sensor & UP == input$UP, unique(sensor)]
     updateSelectInput(inputId = "sensor",
                       choices = choices,
                       selected = choices[1])
@@ -286,12 +286,12 @@ server <- function(input, output, session) {
 
 
   observe({
-    if (input$tipo_sensor == "XEMT") {
+    if (input$tipo_sensor == "SAR") {
       # shinyjs::enable("tipo_escena")
       shinyjs::enable("angulo_incidencia")
 
       # Algunos sistemas satelitales tienen VH y otros HV
-      polarizaciones <- datos[tipo_sensor == input$tipo_sensor, unique(polarizaciones)]
+      polarizaciones <- datos[sensor == input$sensor, unique(banda_nombre)]
 
       updateCheckboxGroupButtons(
         inputId = "banda_nombre",
@@ -347,12 +347,12 @@ server <- function(input, output, session) {
     datos <- datos |>
       DT(UP == input$UP) |>
       DT(tipo_sensor == input$tipo_sensor) |>
-      DT(tipo_humed %in% input$tipo_humed) |>   # TODO: cuando es NULL
-
+      DT(rep(is.null(input$tipo_humed), .N) | tipo_humed %in% input$tipo_humed) |>
+      DT(sensor == input$sensor) |>
       DT(fecha %between% input$rango_fechas) |>
       DT(banda_nombre %in% input$banda_nombre)
 
-    if (input$tipo_sensor == "XEMT") {
+    if (input$tipo_sensor == "SAR") {
       datos <- datos[angulo_incidencia %between% input$angulo_incidencia]
     }
 
