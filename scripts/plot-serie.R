@@ -1,6 +1,7 @@
 decibel <- function(x) {
   10*log10(x)
 }
+DT <- `[`
 
 # RColorBrewer::brewer.pal(10, "Paired")
 paleta_humedales <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99",
@@ -31,21 +32,23 @@ plot_serie_sar <- function(datos) {
                   " con datos satelitales ", sensor)
 
   datos <- datos[banda_nombre %in% c(indices_sinteticos,
-                                     polarizaciones)]
+                                     polarizaciones)] |>
+    DT(, .(valor_promedio = mean(valor_promedio)), by = .(fecha, tipo_humed, banda_nombre))
 
   if (sensor == "SAR") {
     color_lab <- "Polarización"
     ylab <- "Retrodispersión (decibeles)"
+
     datos[, valor_promedio := decibel(valor_promedio)]
+
   } else {
     color_lab <- "Índice Sintético"
     ylab <- "Índice sintético"
 
   }
-
   paleta_bandas <- paleta_bandas[names(paleta_bandas) %in% unique(datos$banda_nombre)]
 
-  datos[, .(valor_promedio = mean(valor_promedio)), by = .(fecha, tipo_humed, banda_nombre)] |>
+  datos |>
     ggplot(aes(fecha, valor_promedio)) +
     geom_line(aes(group = interaction(tipo_humed, banda_nombre),
                   color = banda_nombre)) +
