@@ -35,21 +35,25 @@ plot_serie_sar <- function(datos) {
 
   if (sensor == "SAR") {
     color_lab <- "Polarización"
+    ylab <- "Retrodispersión (decibeles)"
+    datos[, valor_promedio := decibel(valor_promedio)]
   } else {
     color_lab <- "Índice Sintético"
+    ylab <- "Índice sintético"
+
   }
 
   paleta_bandas <- paleta_bandas[names(paleta_bandas) %in% unique(datos$banda_nombre)]
 
   datos[, .(valor_promedio = mean(valor_promedio)), by = .(fecha, tipo_humed, banda_nombre)] |>
-    ggplot(aes(fecha, decibel(valor_promedio))) +
+    ggplot(aes(fecha, valor_promedio)) +
     geom_line(aes(group = interaction(tipo_humed, banda_nombre),
                   color = banda_nombre)) +
     geom_point(aes(color = banda_nombre)) +
     labs(title = title) +
     theme_minimal() +
     scale_x_date("Fecha", date_labels = "%m/%Y") +
-    scale_y_continuous("Retrodispersión (decibeles)") +
+    scale_y_continuous(ylab) +
 
     scale_color_manual(color_lab, values = paleta_bandas,
                        guide = guide_legend(title.position = "top",

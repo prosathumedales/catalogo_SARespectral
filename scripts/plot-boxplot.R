@@ -56,7 +56,7 @@ plot_respuesta_polarimetrica <- function(datos) {
     geom_line(aes(color = gsub("_", " ", tipo_humed))) +
     geom_point(aes(color = gsub("_", " ", tipo_humed))) +
     scale_x_continuous("Longitud de onda (nm)") +
-    scale_y_continuous("Retrodispersión (decibeles)") +
+    scale_y_continuous("Reflectancia (%)") +
     theme_minimal() +
     theme(legend.direction = "horizontal", legend.position = "bottom") +
     labs(title = title) +
