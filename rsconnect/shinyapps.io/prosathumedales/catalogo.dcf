@@ -5,10 +5,10 @@ account: prosathumedales
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6611904
-bundleId: 6086264
+bundleId: 6094916
 url: https://prosathumedales.shinyapps.io/catalogo/
-when: 1657494993.62491
-lastSyncTime: 1657494993.62493
+when: 1657721487.95535
+lastSyncTime: 1657721487.95536
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: datos_raw/PROSAT_DeltaSuperior_Optico_Sentinel2_UPI2b_2022_06_01_revisado_labels.csv|datos_raw/PROSAT_DeltaSuperior_Optico_Sentinel2_UPI4_2022-06-01_revisado_labels.csv|datos_raw/PROSAT_DeltaSuperior_SAR_ALOS_2022-06-26_revisado_labels.csv|datos_raw/PROSAT_DeltaSuperior_SAR_SAOCOM_2022-06-24_revisado_labels.csv|datos_raw/PROSAT_DeltaSuperior_SAR_SENTINEL1_2022-06-14_revisado_labels.csv|logos_raw/EHyS-01 logo.png|logos_raw/LOGO IIIA 3iaV4 corregido.pdf|logos_raw/logo_funintec.png|logos_raw/logo_iafe.JPG|procesamiento_datos.R|README.md|textos_descriptivos.docx
+ignoredFiles: logos_raw/EHyS-01 logo.png|logos_raw/LOGO IIIA 3iaV4 corregido.pdf|logos_raw/logo_funintec.png|logos_raw/logo_iafe.JPG|procesamiento_datos.R|README.md|textos_descriptivos.docx
