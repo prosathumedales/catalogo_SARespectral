@@ -203,7 +203,7 @@ ui <- dashboardPage(
         ),
         fluidRow(
           tabBox(width = 12,
-                 tabPanel("Boxplot", uiOutput("boxplot_ph")),
+                 tabPanel(textOutput("boxplot_title"), uiOutput("boxplot_ph")),
                  tabPanel("Serie temporal", uiOutput("serie_ph"))
           )
         )
@@ -284,7 +284,13 @@ server <- function(input, output, session) {
   })
 
 
-
+  output$boxplot_title <- renderText({
+    if (input$tipo_sensor == "SAR") {
+      "Boxplot"
+    } else {
+      "Firma espectral"
+    }
+  })
   observe({
     if (input$tipo_sensor == "SAR") {
       # shinyjs::enable("tipo_escena")
