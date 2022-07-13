@@ -279,8 +279,6 @@ server <- function(input, output, session) {
       choiceValues = names(humedales),
       selected = names(humedales)
     )
-
-
   })
 
 
