@@ -7,7 +7,7 @@ DT <- `[`
 paleta_humedales <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99",
                       "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A")
 
-textos_humedales <- yaml::read_yaml("datos/textos_humedales.yaml")
+textos_humedales <- yaml::read_yaml("datos/delta_superior/textos_humedales.yaml")
 names(paleta_humedales) <-  gsub("_", " ", names(textos_humedales[[1]]))
 
 indices_sinteticos <- c("NDVI", "EVI", "NDWI")

@@ -9,10 +9,8 @@ source("scripts/plot-serie.R")
 
 DT <- `[`
 
-datos <- readRDS("datos/datos.Rds")
 
-datos$sensor <- ifelse(datos$sensor == "SENTINEL", "Sentinel-1", datos$sensor)
-datos$sensor <- ifelse(datos$sensor == "ALOS", "ALOS/PALSAR-1", datos$sensor)
+
 
 # escenas <- datos[tipo_sensor == "XEMT", unique(tipo_escena)]
 
@@ -22,8 +20,6 @@ bandas_interes <- c("B2",  "B3", "B4", "B5", "B6", "B7", "B8", "B11", "B12")
 names(bandas_interes) <- c("Azul",  "Verde", "Rojo", "Borde rojo 1",
                            "Borde rojo 2", "Borde rojo 3", "IR cercano",
                            "IR medio 1", "IR medio 2")
-
-textos_paisajes <- yaml::read_yaml("datos/textos_paisajes.yaml")
 
 
 descripcionUPModal <- function(datos) {
@@ -73,12 +69,6 @@ detallesServer <- function(id, datos) {
 
 
 
-textos_humedales <- yaml::read_yaml("datos/textos_humedales.yaml")
-
-# Ordeno alfabéticamente
-textos_humedales <- lapply(textos_humedales, function(x) {
-  x[order(names(x))]
-})
 
 humedales_names <- function(humedales) {
   unname(lapply(seq_along(humedales), function(h)
@@ -89,6 +79,14 @@ humedales_names <- function(humedales) {
 
 alerta <- div(h2("El filtro no devolvió ningún dato"),
               p(style = "display:block;", "Pruebe con otra combinación de filtros"))
+
+zonas_dirs <- list.files("datos", pattern = "encabezado.yaml", recursive = TRUE, full.names = TRUE) |>
+  dirname()
+zonas_id <- basename(zonas_dirs)
+zonas <- lapply(file.path(zonas_dirs, "encabezado.yaml"), yaml::read_yaml)
+names(zonas) <- zonas_id
+zonas_choices <- vapply(zonas, \(x) x[["etiqueta"]], character(1))
+zonas_choices <- setNames(names(zonas_choices), zonas_choices)
 
 ui <- dashboardPage(
 
@@ -123,11 +121,19 @@ ui <- dashboardPage(
                 font-size: 160%;
                }"),
     div(class="container",
+        fluidRow(
+          column(width = 12,
+                 shinyWidgets::radioGroupButtons(inputId =  "zona",
+                                                 label = "Seleccione área",
+                                                 choices = zonas_choices,
+                                                 selected = zonas_choices[1]
+                 )
+          )
+        ),
         fluidRow(style = "margin:1.5em;",
                  column(style = "background-color:white; padding:1em;",
                         width = 12,
-                        h3("Humedales del Delta Superior - Sitio Ramsar (Santa Fe, Argentina)"),
-                        p("¿Qué información podemos obtener de los humedales del Delta Superior con datos satelitales? Esta herramienta permite explorar el comportamiento medio de áreas representativas de distintos tipos de humedal del Delta Superior (Sitio Ramsar Delta del Paraná). Al seleccionar la Unidad de paisaje de humedales (actualmente disponibles I4 o I2b), el tipo de humedal, las características del sistema satelital y el rango de fechas de las escenas satelitales, se obtienen gráficos resumen. Los datos satelitales disponibles para la consulta corresponden a los sistemas de microondas activas (SAR) SAOCOM, Sentinel-1 y ALOS/PALSAR-1 y del óptico Sentinel-2. Los gráficos se realizan en dos opciones: boxplots (SAR) o firmas espectrales (óptico) que muestran la variabilidad espacio-temporal; y series temporales en las que se grafica el valor medio a lo largo del tiempo.")
+                        uiOutput("encabezado")
                  )
         ),
 
@@ -184,19 +190,20 @@ ui <- dashboardPage(
           ),
           column(width = 6,
                  dateRangeInput("rango_fechas",
-                                HTML(paste0("Rango de fechas <small>(",
-                                            format(min(datos$fecha), "%d/%m/%Y"),
-                                            " &ndash; ",
-                                            format(max(datos$fecha), "%d/%m/%Y"),
-                                            ")</small>")
-                                ),
+                                "Rango de fechas",
+                                # HTML(paste0("Rango de fechas <small>(",
+                                #             format(min(datos$fecha), "%d/%m/%Y"),
+                                #             " &ndash; ",
+                                #             format(max(datos$fecha), "%d/%m/%Y"),
+                                #             ")</small>")
+                                # ),
                                 language = "es",
                                 separator = "a",
-                                format = "dd/mm/yyyy",
-                                start = min(datos$fecha),
-                                min = min(datos$fecha),
-                                end = max(datos$fecha),
-                                max = max(datos$fecha),
+                                format = "dd/mm/yyyy"
+                                # start = min(datos$fecha),
+                                # min = min(datos$fecha),
+                                # end = max(datos$fecha),
+                                # max = max(datos$fecha),
                  ),
                  tags$style(HTML(".datepicker {z-index:99999 !important;}"))
           )
@@ -242,14 +249,47 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
 
+
+  data_path <- reactive(file.path("datos", input$zona))
+
+  datos <- reactive({
+    datos <- readRDS(file.path(data_path(), "datos.Rds"))
+
+    # esto tendría que estar en el preprocesamiento
+    datos$sensor <- ifelse(datos$sensor == "SENTINEL", "Sentinel-1", datos$sensor)
+    datos$sensor <- ifelse(datos$sensor == "ALOS", "ALOS/PALSAR-1", datos$sensor)
+    datos
+  })
+
+
+  textos_paisajes <- reactive(yaml::read_yaml(file.path(data_path(), "textos_paisajes.yaml")))
+  textos_humedales <- reactive({
+    textos_humedales <- yaml::read_yaml(file.path(data_path(), "textos_humedales.yaml"))
+
+    # Ordeno alfabéticamente
+    textos_humedales <- lapply(textos_humedales, function(x) {
+      x[order(names(x))]
+    })
+    textos_humedales
+  }
+  )
+
+  output$encabezado <- renderUI({
+    list(
+      h3(zonas[[input$zona]][["titulo"]]),
+      p(zonas[[input$zona]][["descripcion"]])
+    )
+  })
+
+
   observeEvent(input$UP_info, {
-    showModal(descripcionUPModal(textos_paisajes[[input$UP]]))
+    showModal(descripcionUPModal(textos_paisajes()[[input$UP]]))
 
   })
 
 
   observe({
-    choices <- datos[tipo_sensor == input$tipo_sensor & UP == input$UP, unique(sensor)]
+    choices <- datos()[tipo_sensor == input$tipo_sensor & UP == input$UP, unique(sensor)]
     updateSelectInput(inputId = "sensor",
                       choices = choices,
                       selected = choices[1])
@@ -257,7 +297,7 @@ server <- function(input, output, session) {
 
   # observe({
   #
-  #   escenas <-  datos[tipo_sensor == input$tipo_sensor, unique(tipo_escena)]
+  #   escenas <-  datos()[tipo_sensor == input$tipo_sensor, unique(tipo_escena)]
   #   updateSelectInput(inputId = "tipo_escena",
   #                     choices = escenas,
   #                     selected = escenas)
@@ -265,7 +305,7 @@ server <- function(input, output, session) {
 
 
   output$tipo_humed_checkbox <- renderUI({
-    humedales <- textos_humedales[[input$UP]]
+    humedales <- textos_humedales()[[input$UP]]
 
     for (h in seq_along(humedales)) {
       detallesServer(names(humedales)[[h]], humedales[[h]])
@@ -295,7 +335,7 @@ server <- function(input, output, session) {
       shinyjs::enable("angulo_incidencia")
       shinyjs::enable("banda_nombre")
       # Algunos sistemas satelitales tienen VH y otros HV
-      polarizaciones <- datos[sensor == input$sensor, unique(banda_nombre)]
+      polarizaciones <- datos()[sensor == input$sensor, unique(banda_nombre)]
 
       updateCheckboxGroupButtons(
         inputId = "banda_nombre",
@@ -318,7 +358,7 @@ server <- function(input, output, session) {
                     html = paste0("Rango de fechas </br><small>Datos entre ",
                                   format(as.Date("2006-01-01"), "%d/%m/%Y"),
                                   " y ",
-                                  format(max(datos[tipo_sensor == input$tipo_sensor]$fecha), "%d/%m/%Y"),
+                                  format(max(datos()[tipo_sensor == input$tipo_sensor]$fecha), "%d/%m/%Y"),
                                   "</small>"))
 
 
@@ -348,17 +388,17 @@ server <- function(input, output, session) {
       # updateDateRangeInput no funciona con html en el label
       # https://github.com/rstudio/shiny/issues/3079
       shinyjs::html(id = "rango_fechas-label",
-                    html = paste0("Rango de fechas </br><small>Datos entre ",
+                    html = paste0("Rango de fechas </br><small>datos entre ",
                                   format(as.Date("1984-01-01"), "%d/%m/%Y"),
                                   " y ",
-                                  format(max(datos[tipo_sensor == input$tipo_sensor]$fecha), "%d/%m/%Y"),
+                                  format(max(datos()[tipo_sensor == input$tipo_sensor]$fecha), "%d/%m/%Y"),
                                   "</small>"))
 
     }
   })
 
   datos_select <- reactive({
-    datos <- datos |>
+    datos <- datos() |>
       DT(UP == input$UP) |>
       DT(tipo_sensor == input$tipo_sensor) |>
       DT(rep(is.null(input$tipo_humed), .N) | tipo_humed %in% input$tipo_humed) |>
