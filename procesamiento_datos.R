@@ -1,3 +1,5 @@
+source("scripts/globals.R")
+
 columnas_importantes <- c("tipo_humed",
                           "tipo_sensor",
                           "UP",
@@ -9,29 +11,29 @@ columnas_importantes <- c("tipo_humed",
                           "valor_promedio"
 )
 
+zonas <- list.files("datos_raw")
+
+for (zona in zonas) {
+  dir_raw <- file.path("datos_raw", zona)
+  archivos <- list.files(dir_raw, full.names = TRUE)
+
+  datos <- lapply(archivos, \(x) {
+    datos <- data.table::fread(x)
+    datos <- datos[, colnames(datos) %in% columnas_importantes, with = FALSE]
+    datos
+  }) |>
+    data.table::rbindlist(use.names = TRUE)
+
+  datos <- datos[banda_nombre %in% c(gl$bandas_interes, gl$indices_sinteticos, gl$polarizaciones, gl$bandas_especiales)]
+
+  datos[tipo_sensor == "Optico" & banda_nombre %in% bandas_interes, valor_promedio := valor_promedio * 0.01]
+
+  datos[, fecha := lubridate::ymd(fecha[1]), by = fecha]
+  datos <- datos[!is.na(fecha)]
 
 
-archivos <- list.files("datos_raw", full.names = TRUE)
+  saveRDS(datos, file.path("datos", zona, "datos.Rds"), compress = TRUE)
+}
 
 
-a <- archivos[1]
 
-datos <- lapply(archivos, \(x) {
-  datos <- data.table::fread(x)
-  datos <- datos[, colnames(datos) %in% columnas_importantes, with = FALSE]
-  datos
-}) |>
-  data.table::rbindlist(use.names = TRUE)
-
-bandas_interes <- c("B2",  "B3", "B4", "B5", "B6", "B7", "B8", "B11", "B12")
-indices_sinteticos <- c("NDVI", "EVI", "NDWI")
-polarizaciones <- c("HH", "HV", "VH", "VV")
-
-datos <- datos[banda_nombre %in% c(bandas_interes, indices_sinteticos, polarizaciones)]
-
-datos[tipo_sensor == "Optico" & banda_nombre %in% bandas_interes, valor_promedio := valor_promedio * 0.01]
-
-datos[, fecha := lubridate::ymd(fecha[1]), by = fecha]
-datos <- datos[!is.na(fecha)]
-
-saveRDS(datos, "datos/datos.Rds", compress = TRUE)

@@ -1,27 +1,5 @@
-decibel <- function(x) {
-  10*log10(x)
-}
-DT <- `[`
+source("scripts/globals.R")
 
-# RColorBrewer::brewer.pal(10, "Paired")
-paleta_humedales <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99",
-                      "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A")
-
-textos_humedales <- yaml::read_yaml("datos/delta_superior/textos_humedales.yaml")
-names(paleta_humedales) <-  gsub("_", " ", names(textos_humedales[[1]]))
-
-indices_sinteticos <- c("NDVI", "EVI", "NDWI")
-polarizaciones <- c("HH", "HV", "VH", "VV")
-
-
-paleta_bandas <- c(NDVI = "#1b9e77",
-                   EVI = "#d95f02",
-                   NDWI = "#7570b3",
-                   HH = "#1b9e77",
-                   HV = "#d95f02",
-                   VH = "#d95f02",
-                   VV = "#7570b3"
-                   )
 
 plot_serie_sar <- function(datos) {
   fechas <- range(datos$fecha)
@@ -31,8 +9,8 @@ plot_serie_sar <- function(datos) {
                   fechas,
                   " con datos satelitales ", sensor)
 
-  datos <- datos[banda_nombre %in% c(indices_sinteticos,
-                                     polarizaciones)] |>
+  datos <- datos[banda_nombre %in% c(gl$indices_sinteticos,
+                                     gl$polarizaciones)] |>
     DT(, .(valor_promedio = mean(valor_promedio)), by = .(fecha, tipo_humed, banda_nombre))
 
   if (sensor == "SAR") {
@@ -46,7 +24,7 @@ plot_serie_sar <- function(datos) {
     ylab <- "Índice sintético"
 
   }
-  paleta_bandas <- paleta_bandas[names(paleta_bandas) %in% unique(datos$banda_nombre)]
+  paleta_bandas <- gl$paleta_bandas[names(gl$paleta_bandas) %in% unique(datos$banda_nombre)]
 
   datos |>
     ggplot(aes(fecha, valor_promedio)) +

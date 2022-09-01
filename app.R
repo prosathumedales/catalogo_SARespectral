@@ -6,21 +6,10 @@ library(data.table)
 
 source("scripts/plot-boxplot.R")
 source("scripts/plot-serie.R")
-
-DT <- `[`
-
-
+source("scripts/globals.R")
 
 
 # escenas <- datos[tipo_sensor == "XEMT", unique(tipo_escena)]
-
-polarizaciones <- c("HH", "VH", "VV")
-
-bandas_interes <- c("B2",  "B3", "B4", "B5", "B6", "B7", "B8", "B11", "B12")
-names(bandas_interes) <- c("Azul",  "Verde", "Rojo", "Borde rojo 1",
-                           "Borde rojo 2", "Borde rojo 3", "IR cercano",
-                           "IR medio 1", "IR medio 2")
-
 
 descripcionUPModal <- function(datos) {
   modalDialog(
@@ -184,15 +173,15 @@ ui <- dashboardPage(
                    inputId = "banda_nombre",
                    label = "Polarización",
                    individual = TRUE,
-                   choices = polarizaciones,
-                   selected = polarizaciones
+                   choices = gl$polarizaciones,
+                   selected = gl$polarizaciones
                  ),
           ),
           column(width = 6,
                  dateRangeInput("rango_fechas",
                                 "Rango de fechas",
                                 # HTML(paste0("Rango de fechas <small>(",
-                                #             format(min(datos$fecha), "%d/%m/%Y"),
+                                #             format(min( <- $fecha), "%d/%m/%Y"),
                                 #             " &ndash; ",
                                 #             format(max(datos$fecha), "%d/%m/%Y"),
                                 #             ")</small>")
@@ -336,7 +325,7 @@ server <- function(input, output, session) {
       shinyjs::enable("banda_nombre")
       # Algunos sistemas satelitales tienen VH y otros HV
       polarizaciones <- datos()[sensor == input$sensor, unique(banda_nombre)]
-
+      polarizaciones <- polarizaciones[polarizaciones %in% gl$polarizaciones]
       updateCheckboxGroupButtons(
         inputId = "banda_nombre",
         label = "Polarización",
@@ -411,7 +400,7 @@ server <- function(input, output, session) {
     }
 
     if (input$tipo_sensor == "Optico") {
-      datos <- datos[banda_nombre %in% c(unname(bandas_interes), input$banda_nombre)]
+      datos <- datos[banda_nombre %in% c(unname(gl$bandas_interes), input$banda_nombre)]
     }
 
     datos
@@ -432,9 +421,9 @@ server <- function(input, output, session) {
   output$boxplot_plot <- renderPlot({
     req(nrow(datos_select()) > 0)
     if (isolate(input$tipo_sensor) == "SAR") {
-      plot_boxplot(datos_select())
+      plot_boxplot(datos_select(), textos_humedales())
     } else {
-      plot_respuesta_polarimetrica(datos_select())
+      plot_respuesta_polarimetrica(datos_select(), textos_humedales())
     }
   })
 
