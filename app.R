@@ -4,8 +4,7 @@ library(shinyWidgets)
 library(ggplot2)
 library(data.table)
 
-source("scripts/plot-boxplot.R")
-source("scripts/plot-serie.R")
+source("scripts/plots.R")
 source("scripts/globals.R")
 
 
@@ -200,7 +199,9 @@ ui <- dashboardPage(
         fluidRow(
           tabBox(width = 12,
                  tabPanel(textOutput("boxplot_title"), uiOutput("boxplot_ph")),
-                 tabPanel("Serie temporal", uiOutput("serie_ph"))
+                 tabPanel("Serie temporal", uiOutput("serie_ph")),
+                 tabPanel("Descomposición de Cloude-Pottier", uiOutput("entropia_ph")),
+                 tabPanel("Descomposición de Freeman-Durden", uiOutput("freeman_ph"))
           )
         )
     ),
@@ -360,8 +361,8 @@ server <- function(input, output, session) {
       updateCheckboxGroupButtons(
         inputId = "banda_nombre",
         label = "Índices Sintéticos",
-        choices = indices_sinteticos,
-        selected = unname(indices_sinteticos)
+        choices = gl$indices_sinteticos,
+        selected = unname(gl$indices_sinteticos)
       )
 
       shinyjs::html(id = "banda_nombre-label",
@@ -395,12 +396,7 @@ server <- function(input, output, session) {
       DT(fecha %between% input$rango_fechas)
 
     if (input$tipo_sensor == "SAR") {
-      datos <- datos[angulo_incidencia %between% input$angulo_incidencia] |>
-        DT(banda_nombre %in% input$banda_nombre)
-    }
-
-    if (input$tipo_sensor == "Optico") {
-      datos <- datos[banda_nombre %in% c(unname(gl$bandas_interes), input$banda_nombre)]
+      datos <- datos[angulo_incidencia %between% input$angulo_incidencia]
     }
 
     datos
@@ -440,6 +436,34 @@ server <- function(input, output, session) {
     plot_serie_sar(datos_select())
   })
 
+
+
+  output$entropia_ph <- renderUI({
+    if (nrow(datos_select()[banda_nombre == "Entropy"]) == 0) {
+      alerta
+    } else {
+      plotOutput("entropia")
+    }
+  })
+
+  output$entropia <- renderPlot({
+    req(nrow(datos_select()[banda_nombre == "Entropy"])  > 0)
+    plot_entropy(datos_select(), textos_humedales())
+  })
+
+
+  output$freeman_ph <- renderUI({
+    if (nrow(datos_select()[banda_nombre %in% gl$bandas_freeman]) == 0) {
+      alerta
+    } else {
+      plotOutput("freeman")
+    }
+  })
+
+  output$freeman <- renderPlot({
+    req(nrow(datos_select()[banda_nombre %in% gl$bandas_freeman])  > 0)
+    plot_freeman(datos_select(), textos_humedales())
+  })
 
 }
 
