@@ -5,10 +5,10 @@ account: prosathumedales
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6611904
-bundleId: 6095680
+bundleId: 6267720
 url: https://prosathumedales.shinyapps.io/catalogo/
-when: 1657734431.41583
-lastSyncTime: 1657734431.41585
+when: 1662309206.65657
+lastSyncTime: 1662309206.65657
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: logos_raw/EHyS-01 logo.png|logos_raw/LOGO IIIA 3iaV4 corregido.pdf|logos_raw/logo_funintec.png|logos_raw/logo_iafe.JPG|procesamiento_datos.R|README.md|textos_descriptivos.docx
+ignoredFiles: logos_raw/EHyS-01 logo.png|logos_raw/LOGO IIIA 3iaV4 corregido.pdf|logos_raw/logo_funintec.png|logos_raw/logo_iafe.JPG|procesamiento_datos.R|README.md|textos_descriptivos.docx|datos_raw
