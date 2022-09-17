@@ -117,7 +117,7 @@ plot_freeman <- function(datos, textos_humedales) {
 
   freeman_breaks <- setNames(gl$bandas_freeman_descripcion, gl$bandas_freeman)
 
-  ggplot(datos, aes(banda_nombre, (valor_promedio))) +
+  ggplot(datos, aes(banda_nombre, valor_promedio)) +
     geom_boxplot(aes(color =  gsub("_", " ", tipo_humed))) +
     scale_x_discrete("Mecanismo de interacción según la descomposición de Freeman-Durden",
                      labels = freeman_breaks) +
@@ -148,12 +148,13 @@ plot_entropy <- function(datos, textos_humedales) {
   datos |>
     ggplot(aes(valor_promedio, angulo_incidencia)) +
     geom_point(aes(color =  gsub("_", " ", tipo_humed))) +
-    scale_x_continuous("Entropía (H)") +
-    scale_y_continuous("Ángulo alfa") +
+    scale_x_continuous("Entropía (H)", limits = c(0, 1)) +
+    scale_y_continuous("Ángulo alfa", limits = c(0, 60)) +
     scale_color_manual("Tipo de Humedal", values = paleta, limits = force,
                        guide = guide_legend(title.position = "top",
                                             keywidth = grid::unit(1, "lines"))) +
     theme_minimal() +
+
     theme(legend.direction = "horizontal", legend.position = "bottom") +
     labs(title = title)
 }
