@@ -375,9 +375,9 @@ server <- function(input, output, session) {
   output$boxplot_plot <- renderPlot({
     req(nrow(datos_select()) > 0)
     if (isolate(input$tipo_sensor) == "SAR") {
-      plot_boxplot(datos_select(), textos_humedales())
+      plot_boxplot(datos_select(), textos_humedales()[[input$UP]])
     } else {
-      plot_respuesta_polarimetrica(datos_select(), textos_humedales())
+      plot_respuesta_polarimetrica(datos_select(), textos_humedales()[[input$UP]])
     }
   })
 
@@ -406,7 +406,7 @@ server <- function(input, output, session) {
 
   output$entropia <- renderPlot({
     req(nrow(datos_select()[banda_nombre == "Entropy"])  > 0)
-    plot_entropy(datos_select(), textos_humedales())
+    plot_entropy(datos_select(), textos_humedales()[[input$UP]])
   })
 
 
@@ -420,7 +420,7 @@ server <- function(input, output, session) {
 
   output$freeman <- renderPlot({
     req(nrow(datos_select()[banda_nombre %in% gl$bandas_freeman])  > 0)
-    plot_freeman(datos_select(), textos_humedales())
+    plot_freeman(datos_select(), textos_humedales()[[input$UP]])
   })
 
 }

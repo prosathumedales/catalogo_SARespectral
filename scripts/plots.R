@@ -55,7 +55,7 @@ plot_boxplot <- function(datos, textos_humedales) {
                   " con datos satelitales ", sensor)
 
   paleta <- gl$paleta_humedales
-  names(paleta) <-  gsub("_", " ", names(textos_humedales[[1]]))
+  names(paleta) <-  gsub("_", " ", names(textos_humedales))
 
   ggplot(datos, aes(banda_nombre, decibel(valor_promedio))) +
     geom_boxplot(aes(color = gsub("_", " ", tipo_humed))) +
@@ -80,7 +80,7 @@ plot_respuesta_polarimetrica <- function(datos, textos_humedales) {
                   " con datos satelitales ", sensor)
 
   paleta <- gl$paleta_humedales
-  names(paleta) <-  gsub("_", " ", names(textos_humedales[[1]]))
+  names(paleta) <-  gsub("_", " ", names(textos_humedales))
 
   datos <- datos[, .(valor_promedio = mean(valor_promedio)), by = .(tipo_humed, banda_nombre)]
 
