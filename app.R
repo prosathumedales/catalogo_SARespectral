@@ -140,7 +140,6 @@ ui <- dashboardPage(
                                          "Óptico" = "Optico"))
           ),
           column(width = 4,
-
                  selectInput("sensor", "Sistema satelital",
                              choices = "")
           ),

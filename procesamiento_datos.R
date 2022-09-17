@@ -31,6 +31,7 @@ for (zona in zonas) {
     datos[tipo_humed == "Riberas_con_bosque",
           tipo_humed := "Riberas_con_bosques"]
 
+    datos <- datos[sensor != "0"]
 
   }
   datos <- datos[banda_nombre %in% c(gl$bandas_interes, gl$indices_sinteticos, gl$polarizaciones, gl$bandas_especiales)]

@@ -113,7 +113,7 @@ plot_freeman <- function(datos, textos_humedales) {
                   " con datos satelitales ", sensor)
 
   paleta <- gl$paleta_humedales
-  names(paleta) <-  gsub("_", " ", names(textos_humedales[[1]]))
+  names(paleta) <-  gsub("_", " ", names(textos_humedales))
 
   freeman_breaks <- setNames(gl$bandas_freeman_descripcion, gl$bandas_freeman)
 
@@ -141,7 +141,7 @@ plot_entropy <- function(datos, textos_humedales) {
                   " con datos satelitales ", sensor)
 
   paleta <- gl$paleta_humedales
-  names(paleta) <-  gsub("_", " ", names(textos_humedales[[1]]))
+  names(paleta) <-  gsub("_", " ", names(textos_humedales))
 
   datos <- datos[banda_nombre == "Entropy"]
 
