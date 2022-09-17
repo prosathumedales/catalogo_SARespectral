@@ -7,9 +7,6 @@ library(data.table)
 source("scripts/plots.R")
 source("scripts/globals.R")
 
-
-# escenas <- datos[tipo_sensor == "XEMT", unique(tipo_escena)]
-
 descripcionUPModal <- function(datos) {
   modalDialog(
     easyClose = TRUE,
@@ -109,23 +106,21 @@ ui <- dashboardPage(
                 font-size: 160%;
                }"),
     div(class="container",
+        fluidRow(style = "margin:1.5em;",
+                 column(style = "background-color:white; padding:1em;",
+                        width = 12,
+                        p(readLines("datos/encabezado.txt"))
+                 )
+        ),
         fluidRow(
           column(width = 12,
                  shinyWidgets::radioGroupButtons(inputId =  "zona",
-                                                 label = "Seleccione área",
+                                                 label = "Seleccionar zona",
                                                  choices = zonas_choices,
                                                  selected = zonas_choices[1]
                  )
           )
         ),
-        fluidRow(style = "margin:1.5em;",
-                 column(style = "background-color:white; padding:1em;",
-                        width = 12,
-                        uiOutput("encabezado")
-                 )
-        ),
-
-
         fluidRow(
           column(width = 4,
                  column(width = 10,
@@ -158,13 +153,6 @@ ui <- dashboardPage(
                                min = 20, max = 50, value = c(20, 50),
                                post = "º"))
           )
-
-          # Se eliminar por comentarios
-          # column(width = 4,
-          #        shinyjs::disabled(
-          #          selectInput("tipo_escena", "Tipo de escena",
-          #                      choices = escenas, multiple = TRUE))
-          # )
         ),
         fluidRow(
           column(width = 6,
@@ -264,11 +252,11 @@ server <- function(input, output, session) {
   }
   )
 
-  output$encabezado <- renderUI({
-    list(
-      h3(zonas[[input$zona]][["titulo"]]),
-      p(zonas[[input$zona]][["descripcion"]])
-    )
+
+
+  observe({
+    choices <- names(textos_humedales())
+    updateSelectInput(inputId = "UP", choices = choices, selected = choices[1])
   })
 
 
@@ -277,24 +265,14 @@ server <- function(input, output, session) {
 
   })
 
-
   observe({
     choices <- datos()[tipo_sensor == input$tipo_sensor & UP == input$UP, unique(sensor)]
     updateSelectInput(inputId = "sensor",
                       choices = choices,
                       selected = choices[1])
   })
-
-  # observe({
-  #
-  #   escenas <-  datos()[tipo_sensor == input$tipo_sensor, unique(tipo_escena)]
-  #   updateSelectInput(inputId = "tipo_escena",
-  #                     choices = escenas,
-  #                     selected = escenas)
-  # })
-
-
   output$tipo_humed_checkbox <- renderUI({
+
     humedales <- textos_humedales()[[input$UP]]
 
     for (h in seq_along(humedales)) {
@@ -321,7 +299,6 @@ server <- function(input, output, session) {
   })
   observe({
     if (input$tipo_sensor == "SAR") {
-      # shinyjs::enable("tipo_escena")
       shinyjs::enable("angulo_incidencia")
       shinyjs::enable("banda_nombre")
       # Algunos sistemas satelitales tienen VH y otros HV
@@ -338,10 +315,7 @@ server <- function(input, output, session) {
       shinyjs::html(id = "banda_nombre-label",
                     html = "Polarización")
     } else if (input$tipo_sensor == "Optico") {
-      # browser()
-      # shinyjs::disable("tipo_escena")
       shinyjs::disable("angulo_incidencia")
-      # shinyjs::disable("banda_nombre")
       updateCheckboxGroupButtons(
         inputId = "banda_nombre",
         label = "Índices Sintéticos",
