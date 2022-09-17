@@ -1,0 +1,32 @@
+I:
+    Depósitos_fluviales_con_bosques:
+        titulo: Depósitos fluviales con bosques
+        descripcion: "Se disponen en forma de bandas paralelas a lo largo del curso principal del Uruguay y en barras de depósito en las islas de cauce. Presentan bosques densos donde las especies ocurren según sus requerimientos hídricos. Se diferencia una zona cercana al agua, topográficamente baja, con especies como sauce, palo amarillo, sarandí negro, colorado y blanco, mata-ojo, acacia negra y laurel de río. En zonas intermedias hay especies mesófilas como guayabo, pitanga, viraró, arrayán, congorosa, chal chal, azota caballo, palo cruz, pindó, mora, etc. En zonas más alejadas del curso de agua y suelos bien drenados aparece espinillo, molle, tala, cedrón, sombra de toro, cina cina, ligustro, etc."
+    Bajos_con_praderas_de_herbáceas_y_leñosas:
+        titulo: Bajos con praderas de herbáceas y leñosas
+        descripcion: "Se encuentran en las zonas de medialoma y bajos extendidos, algo alejadas de la orilla se encuentran árboles aislados como <em>Erythrina crista-galli</em> (ceibo), <em>Vachellia caven</em> (espinillo), higuerón (<em>Ficus luschnathiana</em>), guayabo colorado (<em>Myrcianthes cisplatensis</em>). Hacia los sectores más bajos dominan las praderas herbáceas de especies macrófitas graminoides y latifoliadas."
+    Lagunas:
+        titulo: Lagunas
+        descripcion: "Son cuerpos de agua emplazados en bajos adyacentes al continente o en las islas de cauce. Poseen aguas abiertas o eventualmente con diversas plantas hidrófitas flotantes."
+
+
+II:
+    Riberas_con_bosques:
+        titulo: Riberas con bosques
+        descripcion: "Se disponen en forma de bandas paralelas a lo largo del curso de los arroyos principales y en algunos casos de tributarios menores. Presentan bosques en galería que penetran desde el río Uruguay con especies arbóreas como guayabo, coronillo, molle,  ligustro, sarandí blanco y sauce criollo.  También es posible encontrar palmares del género <em>Syagrus</em>. El estrato herbáceo es pobre, con <em>Dichondra microcalyx</em>, <em>Geranium purpureum</em>, <em>Eleocharis bonariensis</em>, <em>Oxalis</em> spp y <em>Piptochaetium lasianthum</em> como las especies principales, alternando con amplias áreas de suelo desnudo. "
+    Bajos_con_praderas_de_herbáceas_y_leñosas:
+        titulo: Bajos con praderas de herbáceas y leñosas
+        descripcion: "Se trata de ambientes conformados por una matriz herbácea con leñosas dispersas, entre las cuales el espinillo es la especie más común. En el estrato herbáceo, muy rico en especies, se destacan <em>Melica macra</em>, <em>Baccharis coridifolia</em>, <em>Aristida murine</em>, <em>Eleusine tristachya</em>, <em>Paspalum</em> spp, <em>Piptochaetium</em> spp, <em>Poa annua</em> y <em>Vulpia bromoides</em>."
+    Cañadas_con_leñosas_y_herbáceas:
+        titulo: Cañadas con leñosas y herbáceas
+        descripcion: "Ambientes con especies similares a los bosques de ribera pero de composición empobrecida y raleada."
+
+
+III:
+    Cañadas_con_leñosas_y_herbáceas:
+        titulo: Cañadas con leñosas y herbáceas
+        descripcion: "Cursos de agua menores con flujos encauzados y planos de captación con flujo laminar, todos de muy baja pendiente. Incluyen pastizales y praderas herbáceas, alternando con arbustales y algunos pocos bosques remanentes de aquellos en galería emplazados en las cabeceras de los arroyos que atraviesan la unidad II. La cubierta natural ha sido fuertemente transformada por la actividad agrícola o la ganadería."
+    Bajos_con_praderas_de_herbáceas_y_leñosas:
+        titulo: Bajos con praderas de herbáceas y leñosas
+        descripcion: "Bajos y planos de captación de pendiente muy suave sin escurrimiento claro que registran algún tipo de encharcamiento en época de lluvia. Presentan praderas herbáceas anegables con especies como Hymenachne grumosa y canutillares de Paspalum repens, también es posible encontrar comunidades herbáceas de numerosas gramíneas, como <em>Bromus</em> spp., <em>Melica</em> spp., <em>Schizachyrium</em> spp., <em>Nassella</em> spp., <em>Andropogon lateralis</em> y otras herbáceas como <em>Ambrosia tenuifolia</em> o <em>Achyrocline satureioides</em>."
+

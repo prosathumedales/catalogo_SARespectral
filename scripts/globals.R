@@ -19,7 +19,7 @@ gl$bandas_interes_lambda <-  c(492.5,  559.35, 664.75, 703.95, 739.7, 781.25, 83
 #                            "Borde rojo 2", "Borde rojo 3", "IR cercano",
 #                            "IR medio 1", "IR medio 2")
 
-gl$lambdas <- data.table(banda_nombre = unname(gl$bandas_interes),
+gl$lambdas <- data.table::data.table(banda_nombre = unname(gl$bandas_interes),
                          lambda = gl$bandas_interes_lambda)
 
 # RColorBrewer::brewer.pal(10, "Paired")

@@ -52,9 +52,6 @@ detallesServer <- function(id, datos) {
   )
 }
 
-
-
-
 humedales_names <- function(humedales) {
   unname(lapply(seq_along(humedales), function(h)
     span(humedales[[h]]$titulo,
